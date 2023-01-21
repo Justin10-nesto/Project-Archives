@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html> 
+<html lang="en">
+	
+<!-- doccure/patient-dashboard.html  30 Nov 2019 04:12:16 GMT -->
+<head>
+		<meta charset="utf-8">
+		<title>DAS</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+		
+		<!-- Favicons -->
+		<link href="{% static 'assets/img/favicon.png'%}" rel="icon">
+		
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css'%}">
+		
+		<!-- Fontawesome CSS -->
+		<link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/fontawesome.min.css'%}">
+		<link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/all.min.css'%}">
+		
+		<!-- Main CSS -->
+		<link rel="stylesheet" href="{% static 'assets/css/style.css'%}">
+		
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+			<script src="assets/js/html5shiv.min.js"></script>
+			<script src="assets/js/respond.min.js"></script>
+		<![endif]-->
+	
+	</head>
+	<body>
+
+		<!-- Main Wrapper -->
+		<div class="main-wrapper">
+		
+			<!-- Header -->
+			<header class="header">
+				<nav class="navbar navbar-expand-lg header-nav">
+					<div class="navbar-header">
+						<a id="mobile_btn" href="javascript:void(0);">
+							<span class="bar-icon">
+								<span></span>
+								<span></span>
+								<span></span>
+							</span>
+						</a>
+						<a href="/patientdashboard" class="navbar-brand logo">
+							<img src="{% static 'assets/img/logo1.png'%}" class="img-fluid" alt="Logo">
+						</a>
+					</div>
+					<div class="main-menu-wrapper">
+						<div class="menu-header">
+							<a href="#" class="menu-logo">
+								<img src="{% static 'assets/img/logo1.png'%}" class="img-fluid" alt="Logo">
+							</a>
+							<a id="menu_close" class="menu-close" href="javascript:void(0);">
+								<i class="fas fa-times"></i>
+							</a>
+						</div>
+						<ul class="main-nav">
+							<li>
+								<a href="#">Home</a>
+							</li>
+						
+						
+						
+						</ul>
+					</div>		 
+					<ul class="nav header-navbar-rht">
+					
+						
+						<!-- User Menu -->
+						<li class="nav-item dropdown has-arrow logged-item">
+							<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+								<span class="user-img">
+									<img class="rounded-circle" src="{{user.patient.profile.url}}" width="31" alt="Ryan Taylor">
+								</span>
+							</a>
+							<div class="dropdown-menu dropdown-menu-right">
+								<div class="user-header">
+									<div class="avatar avatar-sm">
+										<img src="{{user.patient.profile.url}}" alt="User Image" class="avatar-img rounded-circle">
+									</div>
+									<div class="user-text">
+										<h6>Raphael</h6>
+										<p class="text-muted mb-0">{{user.patient.patientId}}</p>
+										<p class="text-muted mb-0">{{user.role_user.role}}</p>
+									</div>
+								</div>
+								<a class="dropdown-item" href="/patientdashboard">Dashboard</a>
+								<a class="dropdown-item" href="/patientprofile">Profile Settings</a>
+								<a class="dropdown-item" href="/logout">Logout</a>
+							</div>
+						</li>
+						<!-- /User Menu -->
+						
+					</ul>
+				</nav>
+			</header>
+			<!-- /Header -->
+			
+			<!-- Breadcrumb -->
+	
+			<!-- /Breadcrumb -->
+			
+			<!-- Page Content -->
+			<div class="content">
+				<div class="container-fluid">
+
+					<div class="row">
+						
+						<!-- Profile Sidebar -->
+						<div class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar">
+							<div class="profile-sidebar">
+								<div class="widget-profile pro-widget-content">
+									<div class="profile-info-widget">
+										<a href="media/{{user.patient.profile}}" class="booking-doc-img">
+											<img src="{{user.patient.profile.url}}"  alt="User Image">
+										</a>
+										<div class="profile-det-info">
+											<h3><b>Name: </b>{{user.last_name}},{{user.first_name}}</h3>
+											<h6><b>Patient Id:  </b>{{user.patient.patientId}}</h6>
+											<div class="patient-details">
+												<h5><i class="fas fa-birthday-cake"></i> 24 Jul 1983, 38 years</h5>
+												<h5 class="mb-0"><i class="fas fa-map-marker-alt"></i> Dar es salaam,Tanzania</h5>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="dashboard-widget">
+									<nav class="dashboard-menu">
+										<ul>
+											<li class="">
+												<a href="/patientdashboard">
+													<i class="fas fa-columns"></i>
+													<span>Dashboard</span>
+												</a>
+											</li>
+											<li>
+												<a href="/mydoctor">
+													<i class="fas fa-bookmark"></i>
+													<span>Book</span>
+												</a>
+											</li>
+										
+											<li>
+												<a href="/patientprofile">
+													<i class="fas fa-user-cog"></i>
+													<span>Profile Settings</span>
+												</a>
+											</li>
+											<li>
+												<a href="/patientchangepassword">
+													<i class="fas fa-lock"></i>
+													<span>Change Password</span>
+												</a>
+											</li>
+											<li>
+												<a href="/logout">
+													<i class="fas fa-sign-out-alt"></i>
+													<span>Logout</span>
+												</a>
+											</li>
+										</ul>
+									</nav>
+								</div>
+
+							</div>
+						</div>

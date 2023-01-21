@@ -1,0 +1,66 @@
+
+{% load static %}
+{% include "includes/header_admin.html" %}
+			<!-- Page Wrapper -->
+            <div class="page-wrapper">
+                <div class="content container-fluid">
+					
+					<!-- Page Header -->
+					
+					<div class="page-header">
+						<div class="row">
+							<div class="col">
+								<h3 class="page-title">Profile</h3>
+								<ul class="breadcrumb">
+									<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+									<li class="breadcrumb-item active">Profile</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<!-- /Page Header -->
+					<form method="POST" action="" enctype="multipart/form-data">
+						{% csrf_token %}
+					<div class="row">
+						<div class="col-md-12">
+							<div class="profile-header">
+								<div class="row align-items-center">
+									<!-- <div class="col-auto profile-image">
+										<a href="#">
+											<img class="rounded-circle" alt="User Image" src="{{d.profile.url}}">
+										</a>
+									</div> -->
+									<div class="col ml-md-n2 profile-user-info">
+										<!-- <h4 class="user-name mb-0">{{d.user.last_name}}</h4>
+										<h6 class="text-muted">{{d.user.username}}</h6>
+										<div class="user-Location"><i class="fa fa-map-marker"></i> {{d.address}}</div>
+										<div class="about-text"></div> -->
+										{% for i in i %}
+										{% if i in u.groups.all %}
+										<input type="checkbox" name="{{i.name}}" checked value="{{i.id}}">  {{i.name}}
+										<br>
+										{% else %}
+										<input type="checkbox" name="{{i.name}}" value="{{i.id}}">  {{i.name}}
+										<br>
+										{% endif %}
+										{% endfor %}
+									
+									</div>
+									<button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+									<!-- <div class="col-auto profile-btn">
+										
+										<a href="#" class="btn btn-primary">
+											Edit
+										</a>
+									</div> -->
+									</div>
+								</div>
+							</div>
+							
+			<!-- /Page Wrapper -->
+		
+        </div>
+		<!-- /Main Wrapper -->
+		</form>
+		{% include "includes/js.html" %}
+		

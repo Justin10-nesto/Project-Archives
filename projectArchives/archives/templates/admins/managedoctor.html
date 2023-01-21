@@ -1,0 +1,283 @@
+
+{% load static %}
+{% include "includes/header_admin.html" %}
+			<!-- Page Wrapper -->
+            <div class="page-wrapper">
+                <div class="content container-fluid">
+				
+					<!-- Page Header -->
+					<div class="page-header">
+						<div class="row">
+							<div class="col-sm-12">
+								<h3 class="page-title">List of Doctors</h3>
+								<ul class="breadcrumb">
+									<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+									<li class="breadcrumb-item"><a href="javascript:(0);">Users</a></li>
+									<li class="breadcrumb-item active">Doctor</li>
+								</ul>
+								{% if perms.accounts.add_doctor %}
+								<a href="#add_doctor" class="btn btn-primary"  data-toggle="modal">
+									<i class="fe fe-plus"></i>New</a>
+									{% endif %}
+							</div>
+							{% if messages %}
+									{% for i in messages %}
+									{{i}}
+									{% endfor %}
+									{% endif %}
+						</div>
+						
+					</div>
+					<!-- /Page Header -->
+					
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card">
+								<div class="card-body">
+									<div class="table-responsive">
+										<table class="datatable table table-hover table-center mb-0">
+											<thead>
+												<tr>
+													<th>Doctor Name</th>
+													<th>Doctor_ID</th>
+													{% if perms.accounts.view_speciality %}
+													<th>Speciality</th>
+													{% endif %}
+													<th>Email</th>
+													<!-- <th>Last Visit</th> -->
+												    {% if perms.auth.view_group %}
+													<th>Role</th>
+													{% endif %}
+													{% if perms.accounts.change_doctor or perms.accounts.delete_doctor %}
+													<th>Action</th>
+													{% endif %}
+												</tr>
+											</thead>
+											<tbody>
+												{% for d in doctors %}
+												<tr>
+													<td>
+														<h2 class="table-avatar">
+															<a href="{{d.profile.url}}" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{d.profile.url}}" alt="User Image"></a>
+															<a href="/editdoctor/{{d.user.id}}">Dr.{{d.user.last_name}}</a>
+														</h2>
+													</td>
+													<td>{{d.doctorId}}</td>
+													{% if perms.accounts.view_speciality %}
+													<td>{% for i in d.speciality.all %}{{i}} {% endfor %}</td>
+													{% endif %}
+													<td>
+														<!-- <i class="fe fe-star text-warning"></i>
+														<i class="fe fe-star text-warning"></i>
+														<i class="fe fe-star text-warning"></i>
+														<i class="fe fe-star text-warning"></i>
+														<i class="fe fe-star-o text-secondary"></i> -->
+														{{d.user.username}}
+													</td>
+											
+											<!-- <td>{{d.user.last_login|date:"D,d/m/Y"}}</td> -->
+											<td>
+												<!-- {% if d.user.is_active == True %}
+												<h6 style="color:blue">ACTIVE</h6>
+												{% elif d.user.is_active == False %}
+												<h6 style="color:red">BLOCKED</h6>
+												{% endif %} -->
+												{% if perms.auth.view_group %}
+												{% for i in d.user.groups.all %}{{i}}{% endfor %}
+											{% endif %}
+											</td>
+													<td>
+														{% if perms.accounts.change_doctor %}
+															<a class="btn btn-sm bg-success-light"  href="/editdoctor/{{d.user.id}}">
+																<i class="fe fe-pencil"></i> Edit
+															</a>
+															{%endif %}
+															{% if perms.accounts.delete_doctor %}
+															<a href="/removedoctor/{{d.user.id}}" class="btn btn-sm bg-danger-light">
+																<i class="fe fe-user-minus"></i> Delete
+															</a>
+															{% endif %}
+															{% if perms.auth.change_group %}
+															<a href="/grantRole/{{d.user.id}}" class="btn btn-sm bg-primary-light">
+																<i class="fe fe-star"></i> Manage Roles
+															</a>
+                                                              {% endif %}
+															<!-- {% if d.user.is_active == True %}
+															<a class="btn btn-sm bg-danger"  href="/blockdoctor/{{d.user.id}}">
+																<i class="fe fe-lock"></i> Block
+																{% elif d.user.is_active == False %}
+																<a class="btn btn-sm bg-danger"  href="/blockdoctor/{{d.user.id}}">
+																	<i class="fe fe-unlock"></i> UnBlock
+															{% endif %} -->
+													</td>     
+												</tr>
+												{% endfor %}
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>			
+					</div>
+					
+				</div>			
+			</div>
+			<!-- /Page Wrapper -->
+		
+        </div>
+		<!-- /Main Wrapper -->
+		<div class="modal fade" id="delete_modal" aria-hidden="true" role="dialog">
+			<div class="modal-dialog modal-dialog-centered" role="document" >
+				<div class="modal-content">
+				<!--	<div class="modal-header">
+						<h5 class="modal-title">Delete</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>-->
+					<div class="modal-body">
+						<div class="form-content p-2">
+							<h4 class="modal-title">Delete</h4>
+							<p class="mb-4">Are you sure want to delete?</p>
+							<button type="button" class="btn btn-primary">Save </button>
+							<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="add_doctor" aria-hidden="true" role="dialog">
+			<div class="modal-dialog modal-dialog-centered" role="document" >
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Doctor</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						
+						<form action="/adddoctor" method="POST" enctype="multipart/form-data">
+							{% csrf_token %}
+							<div class="row form-row">
+								<div class="col-12 col-sm-4">
+									
+									<div class="form-group">
+										<label>First Name</label>
+										<input name ="fname"class="form-control" pattern="[A-Za-z]{1,}" type="text" placeholder="First_Name" title="Text only required" required>
+									</div>
+								</div>
+								<div class="col-12 col-sm-4">
+									<div class="form-group">
+										<label>Middle Name</label>
+										<input name="mname"class="form-control" pattern="[A-Za-z]{1,}" type="text" title="Text only required" placeholder="Middle_Name"required>
+									</div>
+								</div>
+								<div class="col-12 col-sm-4">
+									<div class="form-group">
+										<label>Last Name</label>
+										<input name="lname" class="form-control" pattern="[A-Za-z]{1,}" type="text" placeholder="Last_Name" title="Text only required" required>
+									</div>
+								</div>
+								<div class="col-12 col-sm-6">
+									<div class="form-group">
+										<label>Email</label>
+										<input name="username" class="form-control"  type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" title="Valid emailformat required" placeholder="Email" required>
+									</div>
+								</div>
+								<div class="col-12 col-sm-6">
+									<div class="form-group">
+										<label>Phone Number</label>
+										<input name="phone" class="form-control" type="tel" pattern="[0-9]{10}" title="insert number,maxmum number is 10 digits" placeholder="Phone Number" required>
+									</div>
+								</div>
+								<div class="col-12 col-sm-6">
+									<div class="form-group">
+										<label>Address</label>
+										<input type="text" name="address" class="form-control" pattern="[A-Za-z-0-9].{,30}" title="insert number,maxmum number is 10 digits" placeholder="Address" required>
+									</div>
+								</div>
+								
+								<div class="col-12 col-sm-12">
+									<div class="form-group">
+										<label>Speciality</label>
+										<br>
+										{% for s in s %}
+										<input type="checkbox" name="{{s.name}}" value="{{s.id}}">{{s.name}}
+										
+										{% endfor %}
+									</div>
+								</div>
+								{% if perms.auth.view_group %}
+								<div class="col-12 col-sm-12">
+									<div class="form-group">
+
+										<label>Roles</label>
+										<br>
+										{% for g in g %}
+										<input type="checkbox" name="{{g.name}}" value="{{g.id}}">{{g.name}}
+										{% endfor %}
+									</div>
+								</div>
+								{% endif %}
+							</div>
+						
+							<button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+			<div class="modal fade" id="grantrole" aria-hidden="true" role="dialog">
+			<div class="modal-dialog modal-dialog-centered" role="document" >
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Role</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						
+						<form action="" method="POST" enctype="multipart/form-data">
+							{% csrf_token %}
+							<div class="row form-row">
+								
+								
+								
+								<div class="col-12 col-sm-12">
+									<div class="form-group">
+										<label>Roles</label>
+										<br>
+										{% for g in g %}
+										
+										<input type="checkbox" name="{{g.name}}" value="{{g.id}}">{{g.name}}
+										
+										{% endfor %}
+									</div>
+								</div>
+								<!-- <div class="col-12 col-sm-12">
+									<div class="form-group">
+										<label>Speciality</label>
+										<br>
+										{% for s in p %}
+										{%if s in user.groups.permissions.all %}
+										<input type="checkbox" name="{{s.name}}" value="{{s.id}}">{{s.name}}
+										{% endif %}
+										{% endfor %}
+									</div> -->
+								</div>
+							</div>
+						
+							<button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		{% include "includes/js.html" %}
+
+	

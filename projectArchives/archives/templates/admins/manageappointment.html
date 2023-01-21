@@ -1,0 +1,188 @@
+
+{% load static %}
+{% include "includes/header_admin.html" %}
+			
+			<!-- Page Wrapper -->
+            <div class="page-wrapper">
+                <div class="content container-fluid">
+				
+					<!-- Page Header -->
+					<div class="page-header">
+						<div class="row">
+							<div class="col-sm-12">
+								<h3 class="page-title">Appointments</h3>
+								<ul class="breadcrumb">
+									<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+									<li class="breadcrumb-item active">Appointments</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<!-- /Page Header -->
+					<div class="row">
+						<div class="col-md-12">
+							<div class="text-right">
+								{% if perms.accounts.add_appointment %}
+							<a href="#edit_appointment_details" class="btn btn-sm bg-success-light" data-toggle="modal">
+								<i class="fe fe-plus"></i> New
+							</a>
+							{% endif %}
+						</div>
+							<br>
+							<!-- Recent Orders -->
+							<div class="card">
+								<div class="card-body">
+									<div class="table-responsive">
+										<table class="datatable table table-hover table-center mb-0">
+											
+											<thead>
+												<tr>
+													<th>Doctor Name</th>
+													<th>Speciality</th>
+													<th>Patient Name</th>
+													<th>Apointment Time</th>
+													<th>Status</th>
+													{% if perms.accounts.change_appointment or perms.accounts.delete_appointment %}
+													<th class="text-right">Action</th>
+												{% endif %}
+												</tr>
+											</thead>
+											<tbody>
+												{% for i in appointment %}
+												{% if perms.accounts.view_appointment %}
+												<tr>
+													<td>
+														<h2 class="table-avatar">
+															<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{i.doctor.doctor.profile.url}}" alt="User Image"></a>
+															<a href="profile.html">Dr. {{i.doctor.doctor.user.last_name}}</a>
+														</h2>
+													</td>
+													<td>{% for j in i.doctor.doctor.speciality.all %}{{j}},{% endfor %}</td>
+													<td>
+														<h2 class="table-avatar">
+															<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{i.patient.profile.url}}" alt="User Image"></a>
+															<a href="profile.html">{{i.patient.user.last_name}} </a>
+														</h2>
+													</td>
+													
+													<td><span class="text-primary d-block">{{i.doctor.dayAvailable}}</span></td>
+													<td>
+														<!-- <div class="status-toggle">
+															<input type="checkbox" id="status_2" class="check" checked>
+															<label for="status_2" class="checktoggle">checkbox</label>
+														</div> -->
+														{% if i.status == 'PENDING'%}
+														<h6 style="color:orange">{{i.status}}</h6>
+														{% elif i.status == 'APPROVED'%}
+														<h6 style="color:Blue">{{i.status}}</h6>
+														{% elif i.status == 'CANCELLED'%}
+														<h6 style="color:red">{{i.status}}</h6>
+														{% elif i.status == 'RE-SCHEDULE'%}
+														<h6 style="color:green">{{i.status}}</h6>
+														{% endif %}
+													</td>
+													{% endif %}
+											            
+													<td class="text-right">
+														{% if perms.accounts.change_appointment %}
+														<a class="btn btn-sm bg-success-light"  href="/cancellappointment/{{i.id}}">
+															<i class="fe fe-pencil"></i> Cancell
+														</a>
+														{% endif %}
+														{% if perms.accounts.delete_appointment %}
+														<a  href="/delete_appointment/{{i.id}}" class="btn btn-sm bg-danger-light">
+															<i class="fe fe-trash"></i> Delete
+														</a>
+														{% endif %}
+														{% if perms.accounts.change_patient %}
+														<a class="btn btn-sm bg-success-light" href="/approve_appointment/{{i.id}}">
+															<i class="fe fe-pencil"></i> Approve
+														</a>
+
+														{% endif %}
+													</td>
+												</tr>
+											
+											{% endfor %}  
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+							<!-- /Recent Orders -->
+							
+						</div>
+					</div>
+				</div>			
+			</div>
+			<!-- /Page Wrapper -->
+
+			<div class="modal fade" id="edit_appointment_details" aria-hidden="true" role="dialog">
+				<div class="modal-dialog modal-dialog-centered" role="document" >
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Appointment</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<form>
+								<div class="row form-row">
+									<div class="col-12 col-sm-6">
+										<div class="form-group">
+											<select name="doctor" class="form-control">
+												{% for a in a %}
+												<option value="{{a.id}}">{{a.doctor.user.last_name}}</option>
+											{% endfor %}
+											</select>
+										</div>
+									</div>
+									<div class="col-12 col-sm-6">
+										<div class="form-group">
+											<label>Patient</label>
+											<input type="text"  class="form-control">
+										</div>
+									</div>
+									<div class="col-12 col-sm-6">
+										<div class="form-group">
+											<label>Appointment Time</label>
+											<input type="text"  class="form-control">
+										</div>
+									</div>
+									<div class="col-12 col-sm-6">
+										<div class="form-group">
+											<label>Status</label>
+											<input type="text"  class="form-control">
+										</div>
+									</div>
+								</div>
+								<button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" id="delete_modal" aria-hidden="true" role="dialog">
+				<div class="modal-dialog modal-dialog-centered" role="document" >
+					<div class="modal-content">
+					<!--	<div class="modal-header">
+							<h5 class="modal-title">Delete</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>-->
+						<div class="modal-body">
+							<div class="form-content p-2">
+								<h4 class="modal-title">Delete</h4>
+								<p class="mb-4">Are you sure want to delete?</p>
+								<button type="button" class="btn btn-primary">Save </button>
+								<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+        </div>
+		{% include "includes/js.html" %}
+	

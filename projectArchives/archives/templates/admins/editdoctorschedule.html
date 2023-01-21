@@ -1,0 +1,123 @@
+<!-- {% if user.is_authenticated and request.user.is_staff and request.user.is_superuser %} -->
+{% load static %}
+{% include "includes/header_admin.html" %}
+			<!-- Page Wrapper -->
+            <div class="page-wrapper">
+                <div class="content container-fluid">
+					
+					<!-- Page Header -->
+					
+					<!-- /Page Header -->
+					
+					<div class="row">
+						<div class="col-md-12">
+							<div class="profile-header">
+								<div class="row align-items-center">
+									<!-- <div class="col-auto profile-image">
+										<a href="#">
+											<img class="rounded-circle" alt="User Image" src="{{d.profile.url}}">
+										</a>
+									</div> -->
+									<!-- <div class="col ml-md-n2 profile-user-info">
+										<h4 class="user-name mb-0">{{d.user.last_name}}</h4>
+										<h6 class="text-muted">{{d.user.username}}</h6>
+										<div class="user-Location"><i class="fa fa-map-marker"></i> {{d.address}}</div>
+										<div class="about-text"></div>
+									</div> -->
+									<!-- <div class="col-auto profile-btn">
+										
+										<a href="#" class="btn btn-primary">
+											Edit
+										</a>
+									</div> -->
+								</div>
+							</div>
+							
+						
+								
+								<!-- Personal Details Tab -->
+								
+								
+				
+								
+									<div class="card">
+										<div class="card-body">
+                                            
+											<div class="row">
+												
+												
+													
+                                                <form action="" method="POST" enctype="multipart/form-data">
+                                                    {% csrf_token %}
+                                                    <div class="row form-row">
+                                                        <div class="col-12 col-sm-12">
+                                                            
+                                                            <div class="form-group">
+                                                                <label>Doctor</label>
+                                                                <select name="doctor" class="form-control">
+                                                                    {% for c in i %}
+                                                                    <option value="{{c.id}}" class="form-group">
+                                                                        {{c.doctor.user.first_name}} {{c.doctor.user.last_name}}
+                                                                    </option>
+                        
+                                                                    
+                        
+                                                                </select>
+                                                            
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-12">
+                                                            <div class="form-group">
+                                                                <label>Day Available</label>
+                                                                <select class="form-control" name="day">
+                                                                    <option value="Monday">Monday</option>
+                                                                    <option value="Tuesday">Tuesday</option>
+                                                                    <option value="Wednesday">Wednesday</option>
+                                                                    <option value="Thursday">Thursday</option>
+                                                                    <option value="Friday">Friday</option>
+                                                                    <option value="Saturday">Saturday</option>
+                                                                    
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-6">
+                                                            <div class="form-group">
+                                                                <label>From</label>
+                                                                <input name="from" class="form-control" type="time" value="{{c.From}}" placeholder="Last_Name"  required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-6">
+                                                            <div class="form-group">
+                                                                <label>To</label>
+                                                                <input name="to" class="form-control" value="{{c.To  | time:'h i s'}}" type="time" required>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                
+                                                    <button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+                                                </form>
+												</div>
+                                                {% endfor %}
+                                            </div>
+										</div>
+									</div>
+								</div>
+								<!-- /Change Password Tab -->
+							
+							</div>
+						</div>
+					</div>
+				
+				</div>			
+			</div>
+			<!-- /Page Wrapper -->
+		
+        </div>
+		<!-- /Main Wrapper -->
+		
+		{% include "includes/js.html" %}
+		<!-- {% else %}
+
+			<h1>YOu are not the authorized user</h1>
+
+			{% endif %} -->

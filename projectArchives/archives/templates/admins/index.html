@@ -1,0 +1,281 @@
+
+{% load static %}
+{% include "includes/header_admin.html" %}
+	<!-- Page Wrapper -->
+	<div class="page-wrapper">
+			
+		<div class="content container-fluid">
+			
+			<!-- Page Header -->
+			<div class="page-header">
+				<div class="row">
+					<div class="col-sm-12">
+						{% if user.is_superuser and user.is_staff %}
+						<h3 class="page-title">Welcome Admin!</h3>
+						
+						{% elif user.is_staff %}
+						<h3 class="page-title">Welcome Doctor</h3>
+						{% else %}
+						<h3 class="page-title">Welcome Patient</h3>
+						{% endif %}
+						<ul class="breadcrumb">
+							<li class="breadcrumb-item active">Dashboard</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- /Page Header -->
+					<div class="row">
+						<div class="col-xl-3 col-sm-6 col-12">
+							<div class="card">
+								<div class="card-body">
+									<div class="dash-widget-header">
+										<span class="dash-widget-icon text-primary border-primary">
+											<i class="fe fe-users"></i>
+										</span>
+										<div class="dash-count">
+											<h3>{{d}}</h3>
+										</div>
+									</div>
+									<div class="dash-widget-info">
+										<h6 class="text-muted">Doctors</h6>
+										<!-- <div class="progress progress-sm">
+											<div class="progress-bar bg-primary w-{{d}}"></div>
+										</div> -->
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-xl-3 col-sm-6 col-12">
+							<div class="card">
+								<div class="card-body">
+									<div class="dash-widget-header">
+										<span class="dash-widget-icon text-success">
+											<i class="fe fe-credit-card"></i>
+										</span>
+										<div class="dash-count">
+											<h3>{{p}}</h3>
+										</div>
+									</div>
+									<div class="dash-widget-info">
+										
+										<h6 class="text-muted">Patients</h6>
+										<!-- <div class="progress progress-sm">
+											<div class="progress-bar bg-success w-{{p}}"></div>
+										</div> -->
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-xl-3 col-sm-6 col-12">
+							<div class="card">
+								<div class="card-body">
+									<div class="dash-widget-header">
+										<span class="dash-widget-icon text-danger border-danger">
+											<i class="fe fe-money"></i>
+										</span>
+										<div class="dash-count">
+											<h3>{{a}}</h3>
+										</div>
+									</div>
+									<div class="dash-widget-info">
+										
+										<h6 class="text-muted">Appointment</h6>
+										<!-- <div class="progress progress-sm">
+											<div class="progress-bar bg-danger w-{{a}}"></div>
+										</div> -->
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-xl-3 col-sm-6 col-12">
+							<div class="card">
+								<div class="card-body">
+									<div class="dash-widget-header">
+										<span class="dash-widget-icon text-warning border-warning">
+											<i class="fe fe-folder"></i>
+										</span>
+										<div class="dash-count">
+											<h3>{{s}}</h3>
+										</div>
+									</div>
+									<div class="dash-widget-info">
+										
+										<h6 class="text-muted">Speciality</h6>
+										<!-- <div class="progress progress-sm">
+											<div class="progress-bar bg-warning w-{{s}}"></div>
+										</div> -->
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				
+					<div class="row">
+						<div class="col-md-7 d-flex">
+						
+							<!-- Recent Orders -->
+							<div class="card card-table flex-fill">
+								<div class="card-header">
+									<h4 class="card-title">Doctors List</h4>
+								</div>
+								<div class="card-body">
+									<div class="table-responsive">
+										<table class="table table-hover table-center mb-0">
+											<thead>
+												<tr>
+													<th>Doctor Name</th>
+													<th>DoctorId</th>
+													<th>Speciality</th>
+													<th>Last Login</th>
+												</tr>
+											</thead>
+											<tbody>
+												{% for d in doctors %}
+												<tr>
+													<td>
+														<h2 class="table-avatar">
+															<a href="{{d.profile.url}}" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{d.profile.url}}" alt="User Image"></a>
+															<a href="#">Dr.{{d.user.last_name}}</a>
+														</h2>
+													</td>
+													
+													<td>{{d.doctorId}}</td>
+													<td>{% for i in d.speciality.all %}{{i}},{% endfor %}</td>
+													<td>
+														<!-- <i class="fe fe-star text-warning"></i>
+														<i class="fe fe-star text-warning"></i>
+														<i class="fe fe-star text-warning"></i>
+														<i class="fe fe-star text-warning"></i>
+														<i class="fe fe-star-o text-secondary"></i> -->
+														{{d.user.last_login}}
+													</td>
+												</tr>
+												{% endfor %}
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+							<!-- /Recent Orders -->
+							
+						</div>
+						<div class="col-md-5 d-flex">
+						
+							<!-- Feed Activity -->
+							<div class="card  card-table flex-fill">
+								<div class="card-header">
+									<h4 class="card-title">Patients List</h4>
+								</div>
+								<div class="card-body">
+									<div class="table-responsive">
+										<table class="table table-hover table-center mb-0">
+											<thead>
+												
+												<tr>													
+													<th>Patient Name</th>
+													<th>Phone</th>
+													<th>Last Visit</th>
+																									
+												</tr>
+											
+											</thead>
+											<tbody>
+												{% for p in patient %}
+												<tr>
+													<td>
+														<h2 class="table-avatar">
+															<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{p.profile.url}}" alt="User Image"></a>
+															<a href="profile.html">{{p.user.last_name}}</a>
+														</h2>
+													</td>
+													<td>{{p.phone_number}}</td>
+													<td>{{p.user.last_login}}</td>
+												
+												</tr>
+												{% endfor %}
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+							<!-- /Feed Activity -->
+							
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+						
+							<!-- Recent Orders -->
+							<div class="card card-table">
+								<div class="card-header">
+									<h4 class="card-title">Appointment List</h4>
+								</div>
+								<div class="card-body">
+									<div class="table-responsive">
+										<table class="table table-hover table-center mb-0">
+											<thead>
+
+												<tr>
+													<th>Doctor Name</th>
+													<th>Speciality</th>
+													<th>Patient Name</th>
+													<th>Apointment Date</th>
+													<th>Status</th>
+													
+												</tr>
+											</thead>
+											<tbody>
+				                            {% for i in appointment %}
+												<tr>
+													<td>
+														<h2 class="table-avatar">
+															<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{i.doctor.profile.url}}" alt="User Image"></a>
+															<a href="profile.html">Dr. {{i.doctor.user.last_name}}</a>
+														</h2>
+													</td>
+													<td>{% for j in i.doctor.speciality.all %}{{j}},{% endfor %}</td>
+													<td>
+														<h2 class="table-avatar">
+															<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{i.patient.profile.url}}" alt="User Image"></a>
+															<a href="profile.html">{{i.patient.user.last_name}} </a>
+														</h2>
+													</td>
+													
+													<td><span class="text-primary d-block">{{i.date}}</span></td>
+													<td>
+														<!-- <div class="status-toggle">
+															<input type="checkbox" id="status_2" class="check" checked>
+															<label for="status_2" class="checktoggle">checkbox</label>
+														</div> -->
+														{% if i.status == 'Pending'%}
+														<h6 style="color:orange">{{i.status}}</h6>
+														{% elif i.status == 'Approved'%}
+														<h6 style="color:Blue">{{i.status}}</h6>
+														{% elif i.status == 'Cancelled'%}
+														<h6 style="color:red">{{i.status}}</h6>
+														{% elif i.status == 'Re-Schedule'%}
+														<h6 style="color:green">{{i.status}}</h6>
+														{% endif %}
+													</td>
+													
+												</tr>
+												{% endfor %}
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+							<!-- /Recent Orders -->
+							
+						</div>
+					</div>
+					
+				</div>			
+			</div>
+			<!-- /Page Wrapper -->
+		
+        </div>
+		{% include "includes/js.html" %}
+
+		

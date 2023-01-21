@@ -1,0 +1,271 @@
+
+{% load static %}
+{% include "includes/header_admin.html" %}
+			<!-- Page Wrapper -->
+            <div class="page-wrapper">
+                <div class="content container-fluid">
+				
+					<!-- Page Header -->
+					<div class="page-header">
+						<div class="row">
+							<div class="col-sm-12">
+								<h3 class="page-title">List of Doctors</h3>
+								<ul class="breadcrumb">
+									<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+									<li class="breadcrumb-item"><a href="javascript:(0);">Users</a></li>
+									<li class="breadcrumb-item active">Doctor</li>
+								</ul>
+								{% if perms.accounts.add_doctor_schedule %}
+								<a href="#add_doctor" class="btn btn-primary"  data-toggle="modal">
+									<i class="fe fe-plus"></i>New</a>
+									{% endif %}
+							</div>
+							{% if messages %}
+									{% for i in messages %}
+									{{i}}
+									{% endfor %}
+									{% endif %}
+						</div>
+						
+					</div>
+					<!-- /Page Header -->
+					
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card">
+								<div class="card-body">
+									<div class="table-responsive">
+										<table class="datatable table table-hover table-center mb-0">
+											<thead>
+												<tr>
+													<th>Doctor Name</th>
+													<th>Email</th>
+													{% if perms.accounts.view_speciality %}
+													<th>Speciality</th>
+													{% endif %}
+													<th>Availabe Day</th>
+												
+												    
+													<th>From</th>
+													
+													
+													<th>To</th>
+													{% if perms.accounts.change_doctorschedule or perms.accounts.delete_doctorschedule %}
+													<th>Action</th>
+													{% endif %}
+												</tr>
+											</thead>
+											<tbody>
+												{% for d in doctors %}
+												<tr>
+													<td>
+														<h2 class="table-avatar">
+															<a href="{{d.doctor.profile.url}}" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{d.doctor.profile.url}}" alt="User Image"></a>
+															<a href="/editdoctor/{{d.user.id}}">Dr.{{d.doctor.user.last_name}}</a>
+														</h2>
+													</td>
+													<td>{{d.doctor.user.username}}</td>
+													{% if perms.accounts.view_speciality %}
+													<td>{% for i in d.doctor.speciality.all %}{{i}} {% endfor %}</td>
+													{% endif %}
+													<td>
+														<!-- <i class="fe fe-star text-warning"></i>
+														<i class="fe fe-star text-warning"></i>
+														<i class="fe fe-star text-warning"></i>
+														<i class="fe fe-star text-warning"></i>
+														<i class="fe fe-star-o text-secondary"></i> -->
+														{{d.dayAvailable}}
+													</td>
+											
+											<!-- <td>{{d.user.last_login|date:"D,d/m/Y"}}</td> -->
+											<td>
+												<!-- {% if d.user.is_active == True %}
+												<h6 style="color:blue">ACTIVE</h6>
+												{% elif d.user.is_active == False %}
+												<h6 style="color:red">BLOCKED</h6>
+												{% endif %} -->
+												{{d.From}}
+											</td>
+											<td>
+												{{d.To}}
+											</td>
+													<td>
+														{% if perms.accounts.change_doctorschedule %}
+															<a class="btn btn-sm bg-success-light"  href="/editdoctorschedule/{{d.id}}">
+																<i class="fe fe-pencil"></i> Edit
+															</a>
+															{% endif %}
+															{% if perms.accounts.delete_doctor_schedule %}
+															
+															<a href="/deletedoctorschedule/{{d.id}}" class="btn btn-sm bg-danger-light">
+																<i class="fe fe-user-minus"></i> Delete
+															</a>
+															{% endif %}
+															
+															<a href="/makeappointment/{{d.id}}" class="btn btn-sm bg-danger-light">
+																<i class="fe fe-user-minus"></i> Make appointment
+															</a>
+														
+															
+                                                              
+															<!-- {% if d.user.is_active == True %}
+															<a class="btn btn-sm bg-danger"  href="/blockdoctor/{{d.user.id}}">
+																<i class="fe fe-lock"></i> Block
+																{% elif d.user.is_active == False %}
+																<a class="btn btn-sm bg-danger"  href="/blockdoctor/{{d.user.id}}">
+																	<i class="fe fe-unlock"></i> UnBlock
+															{% endif %} -->
+													</td>     
+												</tr>
+												{% endfor %}
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>			
+					</div>
+					
+				</div>			
+			</div>
+			<!-- /Page Wrapper -->
+		
+        </div>
+		<!-- /Main Wrapper -->
+		<div class="modal fade" id="delete_modal" aria-hidden="true" role="dialog">
+			<div class="modal-dialog modal-dialog-centered" role="document" >
+				<div class="modal-content">
+				<!--	<div class="modal-header">
+						<h5 class="modal-title">Delete</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>-->
+					<div class="modal-body">
+						<div class="form-content p-2">
+							<h4 class="modal-title">Delete</h4>
+							<p class="mb-4">Are you sure want to delete?</p>
+							<button type="button" class="btn btn-primary">Save </button>
+							<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="add_doctor" aria-hidden="true" role="dialog">
+			<div class="modal-dialog modal-dialog-centered" role="document" >
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Doctor</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						
+						<form action="/adddoctorschedule" method="POST" enctype="multipart/form-data">
+							{% csrf_token %}
+							<div class="row form-row">
+								<div class="col-12 col-sm-12">
+									
+									<div class="form-group">
+										<label>Doctor</label>
+										<select name="doctor" class="form-control">
+											{% for c in c %}
+											<option value="{{c.id}}" class="form-group">
+												{{c.user.first_name}} {{c.user.last_name}}
+											</option>
+
+											{% endfor %}
+
+										</select>
+									
+									</div>
+								</div>
+								<div class="col-12 col-sm-12">
+									<div class="form-group">
+										<label>Day Available</label>
+										<select class="form-control" name="day">
+											<option value="Monday">Monday</option>
+											<option value="Tuesday">Tuesday</option>
+											<option value="Wednesday">Wednesday</option>
+											<option value="Thursday">Thursday</option>
+											<option value="Friday">Friday</option>
+											<option value="Saturday">Saturday</option>
+											
+										</select>
+									</div>
+								</div>
+								<div class="col-12 col-sm-6">
+									<div class="form-group">
+										<label>From</label>
+										<input name="from" class="form-control" type="time" placeholder="Last_Name"  required>
+									</div>
+								</div>
+								<div class="col-12 col-sm-6">
+									<div class="form-group">
+										<label>To</label>
+										<input name="to" class="form-control"  type="time"   required>
+									</div>
+								</div>
+								
+						
+							<button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+			<div class="modal fade" id="grantrole" aria-hidden="true" role="dialog">
+			<div class="modal-dialog modal-dialog-centered" role="document" >
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Role</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						
+						<form action="" method="POST" enctype="multipart/form-data">
+							{% csrf_token %}
+							<div class="row form-row">
+								
+								
+								
+								<div class="col-12 col-sm-12">
+									<div class="form-group">
+										<label>Roles</label>
+										<br>
+										{% for g in g %}
+										
+										<input type="checkbox" name="{{g.name}}" value="{{g.id}}">{{g.name}}
+										
+										{% endfor %}
+									</div>
+								</div>
+								<!-- <div class="col-12 col-sm-12">
+									<div class="form-group">
+										<label>Speciality</label>
+										<br>
+										{% for s in p %}
+										{%if s in user.groups.permissions.all %}
+										<input type="checkbox" name="{{s.name}}" value="{{s.id}}">{{s.name}}
+										{% endif %}
+										{% endfor %}
+									</div> -->
+								</div>
+							</div>
+						
+							<button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		{% include "includes/js.html" %}
+
+	

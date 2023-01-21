@@ -1,0 +1,253 @@
+{% if user.is_authenticated %}
+{% load static %}
+<!DOCTYPE html> 
+<html lang="en">
+	
+<!-- doccure/patient-dashboard.html  30 Nov 2019 04:12:16 GMT -->
+<head>
+		<meta charset="utf-8">
+		<title>DAS</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+		
+		<!-- Favicons -->
+		<link href="{% static 'assets/img/favicon.png'%}" rel="icon">
+		
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css'%}">
+		
+		<!-- Fontawesome CSS -->
+		<link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/fontawesome.min.css'%}">
+		<link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/all.min.css'%}">
+		
+		<!-- Main CSS -->
+		<link rel="stylesheet" href="{% static 'assets/css/style.css'%}">
+		
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+			<script src="assets/js/html5shiv.min.js"></script>
+			<script src="assets/js/respond.min.js"></script>
+		<![endif]-->
+	
+	</head>
+	<body>
+
+		<!-- Main Wrapper -->
+		<div class="main-wrapper">
+		
+			<!-- Header -->
+			<header class="header">
+				<nav class="navbar navbar-expand-lg header-nav">
+					<div class="navbar-header">
+						<a id="mobile_btn" href="javascript:void(0);">
+							<span class="bar-icon">
+								<span></span>
+								<span></span>
+								<span></span>
+							</span>
+						</a>
+						<a href="/patientdashboard" class="navbar-brand logo">
+							<img src="{% static 'assets/img/logo1.png'%}" class="img-fluid" alt="Logo">
+						</a>
+					</div>
+					<div class="main-menu-wrapper">
+						<div class="menu-header">
+							<a href="/patientdashboard" class="menu-logo">
+								<img src="{% static 'assets/img/logo1.png'%}" class="img-fluid" alt="Logo">
+							</a>
+							<a id="menu_close" class="menu-close" href="javascript:void(0);">
+								<i class="fas fa-times"></i>
+							</a>
+						</div>
+						<ul class="main-nav">
+							<li>
+								<a href="#">Home</a>
+							</li>
+						
+						
+						
+						</ul>
+					</div>		 
+					<ul class="nav header-navbar-rht">
+					
+						
+						<!-- User Menu -->
+						<li class="nav-item dropdown has-arrow logged-item">
+							<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+								<span class="user-img">
+									<img class="rounded-circle" src="{% static 'assets/img/patients/patient.jpg'%}" width="31" alt="Ryan Taylor">
+								</span>
+							</a>
+							<div class="dropdown-menu dropdown-menu-right">
+								<div class="user-header">
+									<div class="avatar avatar-sm">
+										<img src="{% static 'assets/img/patients/patient.jpg'%}" alt="User Image" class="avatar-img rounded-circle">
+									</div>
+									<div class="user-text">
+										<h6>Raphael</h6>
+										<p class="text-muted mb-0">Patient</p>
+									</div>
+								</div>
+								<a class="dropdown-item" href="/patientdashboard">Dashboard</a>
+								<a class="dropdown-item" href="profile-settings.html">Profile Settings</a>
+								<a class="dropdown-item" href="/login">Logout</a>
+							</div>
+						</li>
+						<!-- /User Menu -->
+						
+					</ul>
+				</nav>
+			</header>
+			
+			<!-- Breadcrumb -->
+		
+			<!-- /Breadcrumb -->
+			
+			<!-- Page Content -->
+			<div class="content">
+				<div class="container-fluid">
+
+					<div class="row">
+						<div class="col-md-12 col-lg-4 col-xl-3 theiaStickySidebar">
+						
+							<!-- Search Filter -->
+							<div class="card search-filter">
+								<div class="card-header">
+									<h4 class="card-title mb-0">Search Filter</h4>
+								</div>
+								<div class="card-body">
+								<div class="filter-widget">
+									<div class="cal-icon">
+										<input type="text" class="form-control datetimepicker" placeholder="Select Date">
+									</div>	
+											
+								</div>
+								<div class="filter-widget">
+									<h4>Gender</h4>
+									<div>
+										<label class="custom_check">
+											<input type="checkbox" name="gender_type" checked>
+											<span class="checkmark"></span> Male Doctor
+										</label>
+									</div>
+									<div>
+										<label class="custom_check">
+											<input type="checkbox" name="gender_type">
+											<span class="checkmark"></span> Female Doctor
+										</label>
+									</div>
+								</div>
+								<div class="filter-widget">
+									<h4>Select Specialist</h4>
+									<div>
+										<label class="custom_check">
+											<input type="checkbox" name="select_specialist" checked>
+											<span class="checkmark"></span> Urology
+										</label>
+									</div>
+									<div>
+										<label class="custom_check">
+											<input type="checkbox" name="select_specialist" checked>
+											<span class="checkmark"></span> Neurology
+										</label>
+									</div>
+									<div>
+										<label class="custom_check">
+											<input type="checkbox" name="select_specialist">
+											<span class="checkmark"></span> Dentist
+										</label>
+									</div>
+									<div>
+										<label class="custom_check">
+											<input type="checkbox" name="select_specialist">
+											<span class="checkmark"></span> Orthopedic
+										</label>
+									</div>
+									<div>
+										<label class="custom_check">
+											<input type="checkbox" name="select_specialist">
+											<span class="checkmark"></span> Cardiologist
+										</label>
+									</div>
+									<div>
+										<label class="custom_check">
+											<input type="checkbox" name="select_specialist">
+											<span class="checkmark"></span> Cardiologist
+										</label>
+									</div>
+								</div>
+									<div class="btn-search">
+										<button type="button" class="btn btn-block">Search</button>
+									</div>	
+								</div>
+							</div>
+							<!-- /Search Filter -->
+							
+						</div>
+						
+						<div class="col-md-7 col-lg-8 col-xl-9">
+							<div class="row row-grid">
+								<div class="col-md-6 col-lg-4 col-xl-3">
+									<div class="profile-widget">
+										<div class="doc-img">
+											<a href="doctor-profile.html">
+												<img class="img-fluid" alt="User Image" src="{% static 'assets/img/doctors/doctor-01.jpg'%}">
+											</a>
+											<a href="javascript:void(0)" class="fav-btn">
+												<i class="far fa-bookmark"></i>
+											</a>
+										</div>
+										<div class="pro-content">
+											<h3 class="title">
+												<a href="doctor-profile.html">Ruby Perrin</a> 
+												<i class="fas fa-check-circle verified"></i>
+											</h3>
+											<p class="speciality">MDS - Periodontology and Oral Implantology, BDS</p>
+											<div class="rating">
+												<i class="fas fa-star filled"></i>
+												<i class="fas fa-star filled"></i>
+												<i class="fas fa-star filled"></i>
+												<i class="fas fa-star filled"></i>
+												<i class="fas fa-star filled"></i>
+												<span class="d-inline-block average-rating">(17)</span>
+											</div>
+											<ul class="available-info">
+												<li>
+													<i class="fas fa-map-marker-alt"></i> Temeke, Tz
+												</li>
+												<li>
+													<i class="far fa-clock"></i> Available on Fri, 22 Mar
+												</li>
+												
+											</ul>
+											<div class="row row-sm">
+												<div class="col-6">
+													<a href="doctor-profile.html" class="btn view-btn">View Profile</a>
+												</div>
+												<div class="col-6">
+													<a href="booking.html" class="btn book-btn">Book Now</a>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								
+								
+								
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>	
+			<!-- /Page Content -->
+   
+		
+
+		</div>
+		<!-- /Main Wrapper -->
+	  
+		{% include "includes/js.html" %}
+		{% else %}
+			<h1>YOu are not the authorized user</h1>
+
+			{% endif %}
