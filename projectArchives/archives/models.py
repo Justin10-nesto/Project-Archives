@@ -52,6 +52,7 @@ class Staff(models.Model):
     department = models.ForeignKey(Department,on_delete=models.CASCADE)
     mobile = models.TextField(max_length=14, null=True,blank=True)
     photo = models.ImageField(upload_to='profile_pic/staff',default='default.jpg', null=True, blank=True)
+    level = models.OneToOneField(level,null=True,blank=True)
 
     
     
