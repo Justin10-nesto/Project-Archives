@@ -34,6 +34,7 @@ class Student(models.Model):
     academic_year = models.CharField(max_length=12)
     mobile = models.CharField(max_length=14, null=True,blank=True)
     photo = models.ImageField(upload_to='profile_pic',default='default.jpg', null=True, blank=True)
+    course = models.CharField(max_length=100)
     
     
     def __str__(self):
