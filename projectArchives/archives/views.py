@@ -133,34 +133,34 @@ def  login(request):
 
 
 
-#@login_required(login_url='/login')
+@login_required(login_url='/login')
 def dashboard(request):
    
    s = Student.objects.all()
    return render(request,'html/dist/index.html',{'side':'dashboard','s':s})
 
-#@login_required(login_url='/login')
+@login_required(login_url='/login')
 def student(request):
    
    
    return render(request,'html/dist/students.html',{'side':'being'})
 
-#@login_required(login_url='/login')
+@login_required(login_url='/login')
 def staff(request):
    
    
    return render(request,'html/dist/staffs.html',{'side':'staff'})
-
+@login_required(login_url='/login')
 def department(request):
    
    
    return render(request,'html/dist/departments.html',{'side':'department'})
-
+@login_required(login_url='/login')
 def project_type(request):
    
    
    return render(request,'html/dist/project_type.html',{'side':'project_type'})
-
+@login_required(login_url='/login')
 def level(request):
    
    
