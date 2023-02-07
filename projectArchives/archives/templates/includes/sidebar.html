@@ -18,6 +18,10 @@
                 </a>
 <i class="fa-duotone fa-screen-users"></i>
             </li>
+            <li class="{% if side == 'being'  %} active {% elif side == 'od'  %} active {% elif side == 'staff' %} active {% endif %}">
+                <a href="javascript:;" class="{% if side == 'being'  %} active {% elif side == 'od'  %} active {% endif %}"><i class="sidebar-item-icon fa fa-users"></i>
+                    <span class="nav-label">User Management</span><i class="fa fa-angle-left arrow"></i></a>
+                <ul>
             <li class="{% if side == 'being'  %} active {% elif side == 'od'  %} active {% endif %}">
                 <a href="javascript:;" class="{% if side == 'being'  %} active {% elif side == 'od'  %} active {% endif %}"><i class="sidebar-item-icon fa fa-users"></i>
                     <span class="nav-label">Student Management</span><i class="fa fa-angle-left arrow"></i></a>
@@ -26,7 +30,7 @@
                         <a class="{% if side == 'being' %} active {% endif %}" href="/student" >BEING</a>
                     </li>
                     <li>
-                        <a class="{% if side == 'od' %} active {% endif %}" href="/student" >OD</a>
+                        <a class="{% if side == 'od' %} active {% endif %}" href="/student_od" >OD</a>
                     </li>
                 </ul>
             </li>
@@ -42,7 +46,8 @@
                     </li>
                 </ul> {% endcomment %}
             </li>
-
+        </ul>
+    </li>
             <li>
                 <a href="javascript:;" class="{% if side == 'project_being' %} active {% elif side == 'project_od' %} active {% endif %}"><i class="sidebar-item-icon fa fa-book"></i>
                     <span class="nav-label">Projects Management</span><i class="fa fa-angle-left arrow"></i></a>
@@ -77,3 +82,5 @@
     </div>
 </nav>
 <div class="content-wrapper">
+
+   

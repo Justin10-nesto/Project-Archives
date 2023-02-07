@@ -9,7 +9,7 @@ from django.contrib.auth.hashers import make_password
 import random 
 import os
 import datetime
-from django.http import HttpResponseRedirect
+from django.shortcuts import HttpResponseRedirect
 from django.core.files.storage import FileSystemStorage
 from django.template import defaultfilters
 from django.utils.datastructures import MultiValueDictKeyError
@@ -46,36 +46,20 @@ def  login(request):
          if current_date >=october:
             rex.studentInfo(email=request.POST.get("username"), password=request.POST.get("password"))
             if rex.error == "no internet connection":
-               print(rex.error)
-               return HttpResponse('no connection')
+               messages.error(request,rex.error)
+               return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             elif rex.error == "Login Failed: invalid credentials":
-               return HttpResponse(rex.error)
+               messages.error(request,rex.error)
+               return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             elif rex.error == 'invalid status code':
-               return HttpResponse(rex.error)
+               messages.error(request,rex.error)
+               return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             else:
                Student.objects.filter(user__email=request.POST.get("username")).update(NTA_Level = rex.NTA_level,academic_year = rex.academic_year)
-               # user.first_name = rex.name
-               # user.username = rex.email
-               # user.email = rex.email
-               # user.password = make_password(request.POST.get("password"))
-               # user.save()
-               # students.user = user
-               # students.regNo = rex.regno
-               # students.NTA_Level = rex.NTA_level
-               # students.academic_year = rex.academic_year
-               # students.mobile = rex.mobile
-               # students.gender = rex.gender
-               # students.course = rex.level
-               # students.save()
-               # rex.studentImage(email=request.POST.get("username"), password=request.POST.get("password"))
-               # with open(rex.regno+".jpg", 'rb') as f:
-               #    django_file = File(f)
-               #    os.remove('media/profile_pic/{0}.jpg'.format(rex.regno))
-               #    students.photo.save(rex.regno+".jpg", django_file, save=True)
-               # os.remove(rex.regno+".jpg")
                user = auth.authenticate(username=email,password=password)
                if user is not None:
                   auth.login(request,user)
+                  messages.success(request,'Login successful')
                   return redirect('/')
             
          
@@ -84,20 +68,23 @@ def  login(request):
             userr = auth.authenticate(username=email,password=password)
             if userr is not None:
                auth.login(request,userr)
+               messages.success(request,'Login successful')
                return redirect('/')
             else:
-               messages.info(request,'Unknown information')
+               messages.error(request,'Unknown information')
                return redirect('/login')
       else:
          
          rex.studentInfo(email=request.POST.get("username"), password=request.POST.get("password"))
          if rex.error == "no internet connection":
-            print(rex.error)
-            return HttpResponse('no connection')
+               messages.error(request,rex.error)
+               return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
          elif rex.error == "Login Failed: invalid credentials":
-            return HttpResponse(rex.error)
+               messages.error(request,rex.error)
+               return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
          elif rex.error == 'invalid status code':
-            return HttpResponse(rex.error)
+               messages.error(request,rex.error)
+               return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
          else:
             
             user.first_name = rex.name
@@ -112,6 +99,18 @@ def  login(request):
             students.mobile = rex.mobile
             students.gender = rex.gender
             students.course = rex.level
+            if 'computer' in (rex.level).lower() or 'information' in (rex.level).lower() or 'multimedia' in (rex.level).lower():
+               students.department_id = 2
+            elif 'civil' in (rex.level).lower() or 'mining' in (rex.level).lower() or 'gas' in (rex.level).lower():
+               students.department_id = 1
+            elif 'electrical' in (rex.level).lower() or 'biomedical' in (rex.level).lower() or 'renewable' in (rex.level).lower():
+               students.department_id = 3
+            elif 'electronics' in (rex.level).lower() or 'communication' in (rex.level).lower():
+               students.department_id = 4
+            elif 'mechanical' in (rex.level).lower():
+                students.department_id = 5
+            elif 'food' in (rex.level).lower() or 'laboratory' in (rex.level).lower() or 'biotechnology' in (rex.level).lower():
+               students.department_id = 6
             students.save()
             rex.studentImage(email=request.POST.get("username"), password=request.POST.get("password"))
             with open(rex.regno+".jpg", 'rb') as f:
@@ -121,6 +120,7 @@ def  login(request):
             user = auth.authenticate(username=email,password=password)
             if user is not None:
                auth.login(request,user)
+               messages.success(request,'Login successful')
                return redirect('/')
          
             return redirect('/login')
@@ -129,7 +129,7 @@ def  login(request):
       
       
    
-   return render(request,'login.html',{'side':'dashboard'})
+   return render(request,'html/dist/login.html',{'side':'dashboard'})
 
 
 
@@ -141,33 +141,249 @@ def dashboard(request):
 
 @login_required(login_url='/login')
 def student(request):
+   exclude_perm=[1,2,3,4,13,14,15,16,17,18,19,20,21,22,23,24,37]
+   p = Permission.objects.exclude(id__in=exclude_perm)
+   s = Student.objects.filter(NTA_Level__gte=7,NTA_Level__lte=8)
+   d = Department.objects.all()
+   g = Group.objects.all()
    
-   
-   return render(request,'html/dist/students.html',{'side':'being'})
+   return render(request,'html/dist/students.html',{'side':'being','s':s,'d':d,'g':g,'p':p})
 
+@login_required(login_url='/login')
+def student_od(request):
+   exclude_perm=[1,2,3,4,13,14,15,16,17,18,19,20,21,22,23,24,37]
+   p = Permission.objects.exclude(id__in=exclude_perm)
+   s = Student.objects.filter(NTA_Level__lte=6,NTA_Level__gte=4)
+   d = Department.objects.all()
+   g = Group.objects.all()
+   
+   return render(request,'html/dist/students_od.html',{'side':'od','s':s,'d':d,'g':g,'p':p})
+
+
+def addstudent(request):
+ try:
+   if request.method == "POST":
+      
+      name = request.POST.get('name')
+      email = request.POST.get('username')
+      regNo = request.POST.get('regno')
+      mobile = request.POST.get('mobile')
+      academic_year = request.POST.get('academic_year')
+      NTA_Level = request.POST.get('NTA_Level')
+      course = request.POST.get('course')
+      departments = request.POST.get('department')
+      gender = request.POST.get('gender')
+      password = make_password("@DIT123")
+      users = User.objects.filter(username=email).exists()
+      user = Student.objects.filter(regNo=regNo).exists()
+      if users and user:
+         messages.error(request,'Student exists')
+         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+         
+      u = User.objects.create(username=email,email=email,password=password,first_name=name)
+      Student.objects.create(user=u,regNo=regNo,mobile=mobile,academic_year=academic_year,NTA_Level=NTA_Level,course=course,department_id=departments,gender=gender)
+      messages.success(request,'Student created successful')
+      return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+ except:
+    messages.error(request,'Something went wrong')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    
+def editstudent(request,pk):
+   
+ try:
+   r=User.objects.get(id=pk)
+   u = Group.objects.all()
+   d=Student.objects.filter(user__id=pk)
+   p =Student.objects.get(user__id=pk)
+   t = Permission.objects.all()
+   if request.method=='POST':
+      name = request.POST.get('name')
+      email = request.POST.get('username')
+      regNo = request.POST.get('regno')
+      mobile = request.POST.get('mobile')
+      academic_year = request.POST.get('academic_year')
+      NTA_Level = request.POST.get('NTA_Level')
+      course = request.POST.get('course')
+      departments = request.POST.get('department')
+      gender = request.POST.get('gender')
+      users = User.objects.get(id=pk)
+      user = Student.objects.get(user_id=pk)
+      User.objects.filter(id=pk).update(username=email,email=email,first_name=name)
+      Student.objects.filter(user_id=pk).update(regNo=regNo,mobile=mobile,academic_year=academic_year,NTA_Level=NTA_Level,course=course,department_id=departments,gender=gender)
+      for i in Group.objects.all():
+             p.user.groups.remove(i.id)
+             
+      for j in Permission.objects.all():
+              p.user.user_permissions.remove(j.id)
+      
+             
+      s_id = []
+      r_id=[]
+      permission = [x.name for x in Group.objects.all()]
+      perm = [i.name for i in Permission.objects.all()]
+      for x in permission:
+             
+             s_id.append(int(request.POST.get(x))) if request.POST.get(x) else print("")
+      for i in perm:
+             
+             r_id.append(int(request.POST.get(i))) if request.POST.get(i) else print("")
+      for s in s_id:
+           p.user.groups.add(Group.objects.get(id=s)) 
+      for r in r_id:
+           p.user.user_permissions.add(Permission.objects.get(id=r))    
+      messages.success(request,'Student updated successful')
+      return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+ except:
+      messages.error(request,'Something went wrong | exist')
+      return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
 @login_required(login_url='/login')
 def staff(request):
    
    
    return render(request,'html/dist/staffs.html',{'side':'staff'})
+
 @login_required(login_url='/login')
 def department(request):
    
    
    return render(request,'html/dist/departments.html',{'side':'department'})
+
+
 @login_required(login_url='/login')
 def project_type(request):
    
    
    return render(request,'html/dist/project_type.html',{'side':'project_type'})
+
+
 @login_required(login_url='/login')
 def level(request):
    
+   levels = Level.objects.all()
+   return render(request,'html/dist/level.html',{'side':'level','level':levels})
+
+def deletestudent(request,pk):
+   User.objects.filter(id=pk).delete()
+   messages.success(request,'Student deleted successful')
+   return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+@login_required(login_url='/login')
+def delete_level(request,pk):
+   try:
+      Level.objects.filter(id=pk).delete()
+      messages.success(request,'deleted successful')
+      return redirect('/level')
+   except:
+       messages.error(request,'something went wrong')
+
+@login_required(login_url='/login')
+def update_level(request,pk):
+   try:
+      if request.method=='POST':
+         name = request.POST.get('name')
+         Level.objects.filter(id=pk).update(name=name)
+         messages.success(request,'updated successful')   
+         return redirect('/level')
+   except:
+       messages.error(request,'something went wrong')
+ 
+ 
+@login_required(login_url='/login')
+def manageroles(request):
+       
+      g = Group.objects.all().order_by('id')
+      exclude_perm=[1,2,3,4,13,14,15,16,17,18,19,20,21,22,23,24]
+      p = Permission.objects.exclude(id__in=exclude_perm)
+      
+      return render(request,'html/dist/manageroles.html',{'p':p,'g':g})
+
+@login_required(login_url='/login')
+def addroles(request):
+  try:
+   p = Group()
+   if request.method == "POST":
+      name = request.POST.get("name")
+      permission = [x.name for x in Permission.objects.all()]
+      s_id = []
+      p.name=name
+      for x in permission:
+             s_id.append(int(request.POST.get(x))) if request.POST.get(x) else print("")
+      p.save()
+      for s in s_id:
+           p.permissions.add(Permission.objects.get(id=s))   
+      messages.success(request,'Role added successful')
+      return redirect('/manageroles')  
+  except:
+      messages.error(request,'something is wrong')
+
+
+@login_required(login_url='/login')
+
+def editroles(request,pk):
    
-   return render(request,'html/dist/level.html',{'side':'level'})
+  try:
+   exclude_perm=[1,2,3,4,13,14,15,16,17,18,19,20,21,22,23,24,37]
+   p = Permission.objects.exclude(id__in=exclude_perm)
+   r = Group.objects.filter(id=pk)
+   y=Group.objects.get(id=pk)
+   if request.method == 'POST':
+    name = request.POST.get('name')
+    
+             
+    for j in Permission.objects.all():
+              y.permissions.remove(j.id) 
+      
+      
+    permission = [x.name for x in Permission.objects.all()]
+     
+    s_id = []
+    Group.objects.filter(id=pk)
+    for x in permission:
+             s_id.append(int(request.POST.get(x))) if request.POST.get(x) else print("")
+    r=Group.objects.filter(id=pk).update(name=name)
+      
+    for s in s_id:
+           y.permissions.add(Permission.objects.get(id=s))  
+    messages.success(request,'Login successful')
+    return redirect('/manageroles')
+           
+   return render(request,'html/dist/editroles.html',{'r':r,'p':p})
+  except:
+      messages.error(request,'Something is wrong')
+
+@login_required(login_url='/login')     
+def blockuser(request,pk):
+       
+      u = User.objects.filter(id=pk).filter(is_active='True')
+      try:
+         if u:      
+            User.objects.filter(id=pk).update(is_active='False')
+            messages.success(request,'block successful') 
+         else:
+            User.objects.filter(id=pk).update(is_active='True') 
+            messages.success(request,'Activation successful') 
+      except: 
+       messages.error(request,'Something went Wrong')
+      return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+@login_required(login_url='/login')   
+def deleteroles(request,pk):
+    
+    g = Group.objects.filter(id=pk).delete()
+    if g:
+       messages.success(request,'Role deleted successful')
+    
+    return redirect('/manageroles')
+
+def reset_password(request,pk):
+   password = make_password("@DIT123")
+   User.objects.filter(id=pk).update(password=password)
+   messages.success(request,'Password reseted successful')
+   return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 @login_required(login_url='/login')
 def logout(request):
     auth.logout(request)
-
+    messages.success(request,'logout successful')
     return redirect('/login')

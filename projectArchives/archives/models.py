@@ -1,10 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
+from django_seed import Seed
 
-class level(models.Model):
+
+
+class Level(models.Model):
     name = models.CharField(max_length=30)
     date_created = models.DateField(auto_now_add=True)
+    
     
     
     def __str__(self):
@@ -13,8 +17,7 @@ class level(models.Model):
     class Meta:
         db_table = "Level"
 class Department(models.Model):
-    dept_id = models.CharField(primary_key=True, max_length=10)
-    name = models.CharField(max_length=10)
+    name = models.CharField(max_length=100)
     
     
     def __str__(self):
@@ -35,6 +38,7 @@ class Student(models.Model):
     mobile = models.CharField(max_length=14, null=True,blank=True)
     photo = models.ImageField(upload_to='profile_pic',default='default.jpg', null=True, blank=True)
     course = models.CharField(max_length=100)
+   
     
     
     def __str__(self):
@@ -52,7 +56,7 @@ class Staff(models.Model):
     department = models.ForeignKey(Department,on_delete=models.CASCADE)
     mobile = models.TextField(max_length=14, null=True,blank=True)
     photo = models.ImageField(upload_to='profile_pic/staff',default='default.jpg', null=True, blank=True)
-    level = models.OneToOneField(level,null=True,blank=True)
+    level = models.OneToOneField(Level,null=True,blank=True,on_delete=models.CASCADE)
 
     
     
@@ -66,8 +70,9 @@ class Staff(models.Model):
 class Project_type(models.Model):
     name = models.CharField(max_length=30)
     date_created = models.DateField(auto_now_add=True)
+    dept_id= models.ForeignKey(Department,on_delete=models.CASCADE,null=True,blank=True)
     def __str__(self):
-        return self.staff_id
+        return self.name
 
     class Meta:
         db_table = "project_type"
