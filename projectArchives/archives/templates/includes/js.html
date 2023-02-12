@@ -18,7 +18,130 @@
     <script src="{% static 'assets/js/scripts/dashboard_1_demo.js' %}" type="text/javascript"></script>
     <script src="{% static 'assets/vendors/DataTables/datatables.min.js' %}" type="text/javascript"></script>
 
-    
+    <script>
+
+        <script>
+            function AddTableARIA() {
+                try {
+                  var allTables = document.querySelectorAll("table");
+                  for (var i = 0; i < allTables.length; i++) {
+                    allTables[i].setAttribute("role", "table");
+                  }
+                  var allRowGroups = document.querySelectorAll("thead, tbody, tfoot");
+                  for (var i = 0; i < allRowGroups.length; i++) {
+                    allRowGroups[i].setAttribute("role", "rowgroup");
+                  }
+                  var allRows = document.querySelectorAll("tr");
+                  for (var i = 0; i < allRows.length; i++) {
+                    allRows[i].setAttribute("role", "row");
+                  }
+                  var allCells = document.querySelectorAll("td");
+                  for (var i = 0; i < allCells.length; i++) {
+                    allCells[i].setAttribute("role", "cell");
+                  }
+                  var allHeaders = document.querySelectorAll("th");
+                  for (var i = 0; i < allHeaders.length; i++) {
+                    allHeaders[i].setAttribute("role", "columnheader");
+                  }
+                  // this accounts for scoped row headers
+                  var allRowHeaders = document.querySelectorAll("th[scope=row]");
+                  for (var i = 0; i < allRowHeaders.length; i++) {
+                    allRowHeaders[i].setAttribute("role", "rowheader");
+                  }
+                  // caption role not needed as it is not a real role and
+                  // browsers do not dump their own role with display block
+                } catch (e) {
+                  console.log("AddTableARIA(): " + e);
+                }
+              }
+              
+              AddTableARIA();
+              
+              const MAX_COLS = 5;
+              const MIN_COLS = 2;
+              
+              function cropTable(visibleCols) {
+                const table = document.querySelector("figure");
+                const { width: tableWidth } = table.getBoundingClientRect();
+                const cols = table.querySelectorAll("th, td");
+                const newWidth = tableWidth / visibleCols;
+              
+                // Resize columns to fit table
+                cols.forEach(function (col) {
+                  // Always make sure that col is cropped by at least 15%
+                  col.style.minWidth = newWidth + (newWidth * 0.15) + "px";
+                });
+              
+                // Return if we are about to fall below min column count
+                if (visibleCols <= MIN_COLS) {
+                  return;
+                }
+              
+                // Measure a sample table column to check if resizing was successful
+                const { width: colWidth } = cols[0].getBoundingClientRect();
+              
+                // Check if we should crop to 1 column less (calculate new column width)
+                if (colWidth * visibleCols > tableWidth + newWidth * 0.95) {
+                  cropTable(visibleCols - 1);
+                }
+              }
+              
+              window.addEventListener("resize", function () {
+                cropTable(MAX_COLS);
+              });
+              
+              cropTable(MAX_COLS);
+        
+        
+        </script>
+
+        <script>
+            $(document).ready(function() {
+                var table = $('#data-table').DataTable({
+                    "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                  "columnDefs": [{
+                    "searchable": false,
+                    "orderable": false,
+                    "targets": [2]
+                  }],
+                  "order": [
+                    [1, 'asc']
+                  ]
+                });
+              
+                $('#data-table thead tr:eq(1) th').each(function() {
+                  var title = $(this).text();
+                  $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+                });
+              
+              
+              }); 
+        </script>
+
+        <script>
+          $(document).ready(function() {
+              var table = $('#data-tables').DataTable({
+                  "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                "columnDefs": [{
+                  "searchable": false,
+                  "orderable": false,
+                  "targets": [2]
+                }],
+                "order": [
+                  [1, 'asc']
+                ]
+              });
+            
+              $('#data-tables thead tr:eq(1) th').each(function() {
+                var title = $(this).text();
+                $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+              });
+            
+            
+            }); 
+      </script>
+
+    </script>
 </body>
 
 </html>

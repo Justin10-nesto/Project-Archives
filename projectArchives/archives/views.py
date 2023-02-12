@@ -25,6 +25,7 @@ from .models import *
 
 
 def  login(request):
+ try:
    user = User()
    students = Student()
    staffs = Staff()
@@ -33,6 +34,7 @@ def  login(request):
       email=request.POST.get("username")
       password=request.POST.get("password")
       users = User.objects.filter(username=email).exists()
+      
       u = User.objects.filter(username=email)
       
       u = user.first_name.split(',')
@@ -43,36 +45,47 @@ def  login(request):
       
    
       if users:
-         if current_date >=october:
-            rex.studentInfo(email=request.POST.get("username"), password=request.POST.get("password"))
-            if rex.error == "no internet connection":
-               messages.error(request,rex.error)
-               return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-            elif rex.error == "Login Failed: invalid credentials":
-               messages.error(request,rex.error)
-               return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-            elif rex.error == 'invalid status code':
-               messages.error(request,rex.error)
-               return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+         us = User.objects.get(username=email)
+         if us.is_staff==False:
+            if current_date >=october:
+               rex.studentInfo(email=request.POST.get("username"), password=request.POST.get("password"))
+               if rex.error == "no internet connection":
+                  messages.error(request,rex.error)
+                  return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+               elif rex.error == "Login Failed: invalid credentials":
+                  messages.error(request,rex.error)
+                  return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+               elif rex.error == 'invalid status code':
+                  messages.error(request,rex.error)
+                  return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+               else:
+                  Student.objects.filter(user__email=request.POST.get("username")).update(NTA_Level = rex.NTA_level,academic_year = rex.academic_year)
+                  user = auth.authenticate(username=email,password=password)
+                  if user is not None:
+                     auth.login(request,user)
+                     messages.success(request,'Login successful')
+                     return redirect('/')
+               
+            
+                  return redirect('/login')
             else:
-               Student.objects.filter(user__email=request.POST.get("username")).update(NTA_Level = rex.NTA_level,academic_year = rex.academic_year)
-               user = auth.authenticate(username=email,password=password)
-               if user is not None:
-                  auth.login(request,user)
+               userr = auth.authenticate(username=email,password=password)
+               if userr is not None:
+                  auth.login(request,userr)
                   messages.success(request,'Login successful')
                   return redirect('/')
-            
-         
-               return redirect('/login')
+               else:
+                  messages.error(request,'Unknown information')
+                  return redirect('/login')
          else:
-            userr = auth.authenticate(username=email,password=password)
-            if userr is not None:
-               auth.login(request,userr)
-               messages.success(request,'Login successful')
-               return redirect('/')
-            else:
-               messages.error(request,'Unknown information')
-               return redirect('/login')
+               userr = auth.authenticate(username=email,password=password)
+               if userr is not None:
+                  auth.login(request,userr)
+                  messages.success(request,'Login successful')
+                  return redirect('/')
+               else:
+                  messages.error(request,'Unknown information')
+                  return redirect('/login') 
       else:
          
          rex.studentInfo(email=request.POST.get("username"), password=request.POST.get("password"))
@@ -130,6 +143,8 @@ def  login(request):
       
    
    return render(request,'html/dist/login.html',{'side':'dashboard'})
+ except:
+    messages.success(request,'Something went wrong')
 
 
 
@@ -143,7 +158,8 @@ def dashboard(request):
 def student(request):
    exclude_perm=[1,2,3,4,13,14,15,16,17,18,19,20,21,22,23,24,37]
    p = Permission.objects.exclude(id__in=exclude_perm)
-   s = Student.objects.filter(NTA_Level__gte=7,NTA_Level__lte=8)
+   
+   s = Student.objects.all()
    d = Department.objects.all()
    g = Group.objects.all()
    
@@ -159,7 +175,7 @@ def student_od(request):
    
    return render(request,'html/dist/students_od.html',{'side':'od','s':s,'d':d,'g':g,'p':p})
 
-
+@login_required(login_url='/login')
 def addstudent(request):
  try:
    if request.method == "POST":
@@ -187,7 +203,43 @@ def addstudent(request):
  except:
     messages.error(request,'Something went wrong')
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-    
+
+@login_required(login_url='/login')
+def addstaff(request):
+ try:
+   if request.method == "POST":
+      
+      name = request.POST.get('name')
+      email = request.POST.get('username')
+      staff_id = request.POST.get('staff_id')
+      mobile = request.POST.get('mobile')
+      level = request.POST.get('level')
+      # NTA_Level = request.POST.get('NTA_Level')
+      # course = request.POST.get('course')
+      departments = request.POST.get('department')
+      gender = request.POST.get('gender')
+      
+      group_id = request.POST.get('role')
+      print(group_id)
+      group = Group.objects.get(id=group_id)
+      password = make_password("@DIT123")
+      users = User.objects.filter(username=email).exists()
+      user = Staff.objects.filter(staff_id=staff_id).exists()
+      if users and user:
+         messages.error(request,'Staff exists')
+         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+         
+      u = User.objects.create(username=email,email=email,password=password,first_name=name)
+      Staff.objects.create(user=u,staff_id=staff_id,mobile=mobile,department_id=departments,gender=gender,level=level)
+      u.groups.add(group)
+      messages.success(request,'Staff created successful')
+      return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+ except:
+    messages.error(request,'Something went wrong')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+ 
+ 
+@login_required(login_url='/login')
 def editstudent(request,pk):
    
  try:
@@ -236,17 +288,25 @@ def editstudent(request,pk):
  except:
       messages.error(request,'Something went wrong | exist')
       return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
+   
+   
 @login_required(login_url='/login')
 def staff(request):
+   l = Level.objects.all()
    
+   exclude_perm=[1,2,3,4,13,14,15,16,17,18,19,20,21,22,23,24,37]
+   p = Permission.objects.exclude(id__in=exclude_perm)
+   s = Staff.objects.all()
+   d = Department.objects.all()
+   g = Group.objects.all()
    
-   return render(request,'html/dist/staffs.html',{'side':'staff'})
+   return render(request,'html/dist/staffs.html',{'side':'staff','s':s,'d':d,'g':g,'p':p,'l':l})
 
 @login_required(login_url='/login')
 def department(request):
    
-   
-   return render(request,'html/dist/departments.html',{'side':'department'})
+   d = Department.objects.all()
+   return render(request,'html/dist/departments.html',{'side':'department','d':d})
 
 
 @login_required(login_url='/login')
@@ -262,10 +322,13 @@ def level(request):
    levels = Level.objects.all()
    return render(request,'html/dist/level.html',{'side':'level','level':levels})
 
+@login_required(login_url='/login')
 def deletestudent(request,pk):
    User.objects.filter(id=pk).delete()
-   messages.success(request,'Student deleted successful')
+   messages.success(request,'User deleted successful')
    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
 
 @login_required(login_url='/login')
 def delete_level(request,pk):
@@ -318,7 +381,6 @@ def addroles(request):
 
 
 @login_required(login_url='/login')
-
 def editroles(request,pk):
    
   try:
@@ -354,17 +416,20 @@ def editroles(request,pk):
 @login_required(login_url='/login')     
 def blockuser(request,pk):
        
-      u = User.objects.filter(id=pk).filter(is_active='True')
+     
       try:
+         u = User.objects.filter(id=pk).filter(is_active='True')
          if u:      
             User.objects.filter(id=pk).update(is_active='False')
-            messages.success(request,'block successful') 
+            messages.success(request,'block successful')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
          else:
             User.objects.filter(id=pk).update(is_active='True') 
             messages.success(request,'Activation successful') 
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
       except: 
        messages.error(request,'Something went Wrong')
-      return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+       return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 @login_required(login_url='/login')   
@@ -387,3 +452,41 @@ def logout(request):
     auth.logout(request)
     messages.success(request,'logout successful')
     return redirect('/login')
+ 
+ 
+def editstaff(request,pk):
+#  try:
+   if request.method == "POST":
+      
+      name = request.POST.get('name')
+      email = request.POST.get('username')
+      staff_id = request.POST.get('staff_id')
+      mobile = request.POST.get('mobile')
+      level = request.POST.get('level')
+      # NTA_Level = request.POST.get('NTA_Level')
+      # course = request.POST.get('course')
+      departments = request.POST.get('department')
+      gender = request.POST.get('gender')
+      
+      group_id = request.POST.get('roles')
+      
+      group = Group.objects.get(id=group_id)
+      
+      password = make_password("@DIT123")
+      users = User.objects.filter(username=email).exists()
+      user = Staff.objects.filter(staff_id=staff_id).exists()
+      # if users and user:
+      #    messages.error(request,'Staff exists')
+      #    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+         
+      User.objects.filter(id=pk).update(username=email,email=email,first_name=name)
+      Staff.objects.filter(user_id=pk).update(staff_id=staff_id,mobile=mobile,department_id=departments,gender=gender,level=level)
+      u = User.objects.get(id=pk)
+      for i in Group.objects.all():
+             u.groups.remove(i.id)
+      u.groups.add(group)
+      messages.success(request,'Staff created successful')
+      return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+#  except:
+#     messages.error(request,'Something went wrong')
+#     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

@@ -16,23 +16,23 @@
                 <a class="{% if side == 'dashboard' %} active {% endif %}" href="/"><i class="sidebar-item-icon fa fa-th-large"></i>
                     <span class="nav-label">Dashboard</span>
                 </a>
-<i class="fa-duotone fa-screen-users"></i>
+                <i class="fa-duotone fa-screen-users"></i>
             </li>
-            <li class="{% if side == 'being'  %} active {% elif side == 'od'  %} active {% elif side == 'staff' %} active {% endif %}">
-                <a href="javascript:;" class="{% if side == 'being'  %} active {% elif side == 'od'  %} active {% endif %}"><i class="sidebar-item-icon fa fa-users"></i>
-                    <span class="nav-label">User Management</span><i class="fa fa-angle-left arrow"></i></a>
-                <ul>
-            <li class="{% if side == 'being'  %} active {% elif side == 'od'  %} active {% endif %}">
-                <a href="javascript:;" class="{% if side == 'being'  %} active {% elif side == 'od'  %} active {% endif %}"><i class="sidebar-item-icon fa fa-users"></i>
-                    <span class="nav-label">Student Management</span><i class="fa fa-angle-left arrow"></i></a>
-                <ul class="nav-2-level collapse">
+            
+            <li class="{% if side == 'being'  %} active {% endif %}">
+                {% comment %} <a href="javascript:;" class="{% if side == 'being'  %} active {% elif side == 'od'  %} active {% endif %}"><i class="sidebar-item-icon fa fa-users"></i>
+                    <span class="nav-label">Student Management</span><i class="fa fa-angle-left arrow"></i></a> {% endcomment %}
+                
                     <li>
-                        <a class="{% if side == 'being' %} active {% endif %}" href="/student" >BEING</a>
+                        <a class="{% if side == 'being' %} active {% endif %}" href="/student" ><i class="sidebar-item-icon fa fa-users"></i>
+                            <span class="nav-label">Student Management</span>
+                        </a>
+                        
                     </li>
-                    <li>
+                    {% comment %} <li>
                         <a class="{% if side == 'od' %} active {% endif %}" href="/student_od" >OD</a>
-                    </li>
-                </ul>
+                    </li> {% endcomment %}
+                
             </li>
             <li>
                 <a class="{% if side == 'staff' %} active {% endif %}" href="/staff" class=""><i class="sidebar-item-icon fa fa-users"></i>
@@ -46,8 +46,7 @@
                     </li>
                 </ul> {% endcomment %}
             </li>
-        </ul>
-    </li>
+        
             <li>
                 <a href="javascript:;" class="{% if side == 'project_being' %} active {% elif side == 'project_od' %} active {% endif %}"><i class="sidebar-item-icon fa fa-book"></i>
                     <span class="nav-label">Projects Management</span><i class="fa fa-angle-left arrow"></i></a>
