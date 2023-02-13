@@ -105,7 +105,7 @@
                     "targets": [2]
                   }],
                   "order": [
-                    [1, 'asc']
+                    [4, 'desc']
                   ]
                 });
               
@@ -128,7 +128,7 @@
                   "targets": [2]
                 }],
                 "order": [
-                  [1, 'asc']
+                  [3, 'asc']
                 ]
               });
             
@@ -141,7 +141,53 @@
             }); 
       </script>
 
+      <script>
+        $(document).ready(function() {
+            var table = $('#data-tablez').DataTable({
+                "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+              "columnDefs": [{
+                "searchable": false,
+                "orderable": false,
+                "targets": [2]
+              }],
+              "order": [
+                [0, 'asc']
+              ]
+            });
+          
+            $('#data-tablez thead tr:eq(1) th').each(function() {
+              var title = $(this).text();
+              $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+            });
+          
+          
+          }); 
     </script>
+
+
+    <script>
+      $(document).ready(function() {
+          var table = $('#data-tabler').DataTable({
+              "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            "columnDefs": [{
+              "searchable": false,
+              "orderable": false,
+              "targets": [2]
+            }],
+            "order": [
+              [0, 'asc']
+            ]
+          });
+        
+          $('#data-tabler thead tr:eq(1) th').each(function() {
+            var title = $(this).text();
+            $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+          });
+        
+        
+        }); 
+  </script>
+
 </body>
 
 </html>

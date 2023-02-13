@@ -12,6 +12,7 @@
         <li class="breadcrumb-item">DataTables</li>
     </ol>
 </div>
+{% include "includes/messages.html" %}
 <div class="page-content fade-in-up">
     <div class="ibox">
         <div class="ibox-head">
@@ -24,24 +25,24 @@
             <div class="table-wrapper" role="group" aria-labelledby="caption">
                 
                     
-                <table id="data-table" class="table table-striped table-bordered" style="width:100%">
+                <table id="data-tablez" class="table table-striped table-bordered" style="width:100%">
                   <thead>
                     <tr>
-                        <th>DeptCode</th>
+                        {% comment %} <th>DeptCode</th> {% endcomment %}
                       <th>Name</th>
                       <th>Action</th>
                       
                     </tr>
                   </thead>
                   <tbody>
-                    {% for d in d%}
+                    {% for d in d %}
                     <tr>
-                      <td>{{forloop.counter}}</td>
+                      {% comment %} <td>{{forloop.counter}}</td> {% endcomment %}
                       <td>{{d.name}}</td>
                       <td>
                         <button class="btn btn-default" data-toggle="modal"
                         data-target="#modal-lg2{{d.id}}"><i class="fa fa-pencil font-14"></i></button>
-                        <button class="btn btn-default"data-toggle="modal" data-target="#modal-danger{{d.id}}"><i class="fa fa-trash font-14"></i></button>
+                        <button class="btn btn-default"data-toggle="modal" data-target="#modal-dangerx{{d.id}}"><i class="fa fa-trash font-14"></i></button>
                                     </td>
                     </tr>
                     {% endfor %}
@@ -51,26 +52,73 @@
               
         </div>
     </div>
-    <div class="modal fade" id="modal-danger" aria-hidden="true">
+</div>
+    {% for d in d %}
+<div>
+    <form method="POST" action="/deletedepartment/{{d.id}}">
+        {% csrf_token %}
+    <div class="modal fade" id="modal-dangerx{{d.id}}" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
-              {% comment %} <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button> {% endcomment %}
             </div>
             <div class="modal-body">
               Are you sure you want to delete this record?
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-              <button type="button" class="btn btn-danger">Delete</button>
+              <button type="submit" class="btn btn-danger">Delete</button>
             </div>
           </div>
         </div>
-      </div>
-      <div>
+    </div>
+    </div>
+</form>
+</div>     
+<div>
+    <form method="post" action="editdepartment/{{d.id}}">
+        {% csrf_token %}
+        <div class="modal fade" id="modal-lg2{{d.id}}">
+            <div class="modal-dialog modal-lg1">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit Department</h4>
+                        {% comment %} <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button> {% endcomment %}
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                        <div class="row">
+                            <div class="col col-md-12">
+                                <label>Name</label>
+                                <input type="text" name="name" class="form-control"
+                                    placeholder="Department Name" value="{{d.name}}">
+                            </div>
+                        </div>
+                        
+                        </p>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <button name="addproduct" class="btn btn-primary ">Submit</button>
+                        
+                    </div>
+                    
+                </div>
+
+                
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+    </form>
+</div>
+    {% endfor %}
+
+
     <form method="post" action="">
         {% csrf_token %}
         <div class="modal fade" id="modal-lg1">
@@ -99,8 +147,9 @@
                         <div class="row">
                             <div class="col col-md-6">
                                 <label>Email</label>
-                                <input type="number" name="email" class="form-control"
+                                <input type="number" id='email' name="email" class="form-control"
                                     placeholder="Email">
+                                    <span id="email_status"></span>
                             </div>
                             <div class="col col-md-6">
                                 <label></label>
@@ -188,133 +237,58 @@
                 <!-- /.modal-content -->
             </div>
             <!-- /.modal-dialog -->
-        </div>
+        
         <!-- /.modal -->
     </form>
 </div>
+<script>
 
+    $(document).ready(function() {
+        $('#email').on('blur', function() {
+            var email = $(this).val();
+            if (email) {
+                $.ajax({
+                    url: '{% url 'check_info' %}',
+                    data: {
+                        email: email,
+                        type: 'email'
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.is_taken) {
+                            $('#email_status').html('Email already exists.').css('color', 'red');
+                        } else {
+                            $('#email_status').html('Email is available.').css('color', 'green');
+                        }
+                    }
+                });
+            }
+        });
+    
+        $('#username').on('blur', function() {
+            var username = $(this).val();
+            if (username) {
+                $.ajax({
+                    url: '{% url 'check_info' %}',
+                    data: {
+                        username: username,
+                        type: 'username'
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.is_taken) {
+                            $('#username_status').html('Username already exists.').css('color', 'red');
+                        } else {
+                            $('#username_status').html('Username is available.').css('color', 'green');
+                        }
+                    }
+                });
+            }
+        });
+    });
+    
 
-    <form method="post" action="">
-        {% csrf_token %}
-        <div class="modal fade" id="modal-lg2">
-            <div class="modal-dialog modal-lg1">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Add Student</h4>
-                        {% comment %} <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button> {% endcomment %}
-                    </div>
-                    <div class="modal-body">
-                        <p>
-                        <div class="row">
-                            <div class="col col-md-6">
-                                <label>Name</label>
-                                <input type="text" name="name" class="form-control"
-                                    placeholder="Staff Name">
-                            </div>
-                            <div class="col col-md-6">
-                                <label>Registration Number</label>
-                                <input type="text" name="regno" class="form-control"
-                                    placeholder="Staff Id">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col col-md-6">
-                                <label>Email</label>
-                                <input type="number" name="email" class="form-control"
-                                    placeholder="Email">
-                            </div>
-                            <div class="col col-md-6">
-                                <label></label>
-                                <input type="number" min="0" name="quantity" class="form-control"
-                                    placeholder="Weka idadi ya bidhaa...">
-                            </div>
-                            <div class="col col-md-6">
-                                <label>Department</label>
-    
-                            <select class="form-control" name="department">
-    
-                                <option disabled selected value>select department</option>
-                                {% comment %} @foreach ($branch as $role) {% endcomment %}
-                                <option value=""></option>
-                                {% comment %} @endforeach {% endcomment %}
-    
-    
-                              </select>
-    
-    
-                            </div>
-                            <div class="col col-md-6">
-                                <label>Gender</label>
-    
-                                <div class="btn-group" data-toggle="buttons">
-                                    <label class="btn btn-outline-info"><i class="fa fa-check active-visible"></i> Male
-                                        <input type="radio">
-                                    </label>
-                                    <label class="btn btn-outline-info"><i class="fa fa-check active-visible"></i> Female
-                                        <input type="radio">
-                                    </label>
-                                    <label class="btn btn-outline-info"><i class="fa fa-check active-visible"></i> N/A
-                                        <input type="radio">
-                                    </label>
-                                </div>
-    
-    
-                            </div>
-                            <div class="col col-md-6">
-                            <div class="form-group">
-                                <label class="form-control-label">Choose Department</label>
-                                <select class="form-control select2_demo_1">
-                                    <optgroup label="Department">
-                                        <option value="">..........</option>
-                                      
-                                    </optgroup>
-                                </select>
-                                </div> 
-                            {% comment %} <div class="col col-md-6 d-nones" id="kupimwa">
-    
-                                <label>idadi(kupimwa Jumla)</label>
-                                <input type="number" name="sub_quantity" min="0" step="0.25"  value="0" class="form-control"
-                                    placeholder="weka punguzo la bidhaa..." required>
-    
-                            </div>
-                            <div class="col col-md-6 d-nones" id="kupimwaa">
-    
-                                <label>Bei kwa kipimo</label>
-                                <input type="number" step="0.25" name="sub_amount" min="0"  value="0" class="form-control"
-                                    placeholder="weka punguzo la bidhaa..." required>
-    
-                            </div> {% endcomment %}
-                       
-                           
-                            
-                            {% comment %} <div class="col col-md-6">
-                                <label>punguzo %</label>
-                                <input type="number" name="discount" min="0" max="100" value="0" class="form-control"
-                                    placeholder="weka punguzo la bidhaa..." required>
-                            </div> {% endcomment %}
-                        
-    
-                        </div>
-                        </p>
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                        <button name="addproduct" class="btn btn-primary ">Submit</button>
-                        
-                    </div>
-                    
-                </div>
-
-                
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
-        <!-- /.modal -->
-    </form>
-
+</script>
     
     
 </div>
@@ -368,8 +342,8 @@ $(document).ready(function() {
       });
       
 </script>
-{% include "includes/footer.html"%}
-{% include 'includes/theme.html' %}
+{% comment %} {% include "includes/footer.html"%} {% endcomment %}
+
             {% include "includes/js.html "%} 
 </body>
 </html>

@@ -18,7 +18,7 @@ class Level(models.Model):
         db_table = "Level"
 class Department(models.Model):
     name = models.CharField(max_length=100)
-    
+   
     
     def __str__(self):
         return self.name
@@ -32,7 +32,7 @@ class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     gender = models.CharField(choices=GENDER, max_length=20)
     regNo =  models.CharField(unique=True,max_length=14)
-    NTA_Level = models.IntegerField(max_length=2,null=True,blank=True)
+    NTA_Level = models.IntegerField(null=True,blank=True)
     department = models.ForeignKey(Department,null=True,on_delete=models.CASCADE)
     academic_year = models.CharField(max_length=12)
     mobile = models.CharField(max_length=14, null=True,blank=True)
@@ -56,8 +56,6 @@ class Staff(models.Model):
     photo = models.ImageField(upload_to='profile_pic/staff',default='default.jpg', null=True, blank=True)
     level = models.OneToOneField(Level,null=True,blank=True,on_delete=models.CASCADE)
 
-    
-    
     def __str__(self):
         return self.staff_id
 
@@ -68,7 +66,7 @@ class Staff(models.Model):
 class Project_type(models.Model):
     name = models.CharField(max_length=30)
     date_created = models.DateField(auto_now_add=True)
-    dept_id= models.ForeignKey(Department,on_delete=models.CASCADE,null=True,blank=True)
+    department= models.ForeignKey(Department,null=True,blank=True,on_delete=models.CASCADE)    
     def __str__(self):
         return self.name
 
@@ -105,7 +103,7 @@ class Document(models.Model):
 class progress(models.Model):
     project = models.ForeignKey(Document,on_delete=models.CASCADE)
     staff = models.ForeignKey(Staff,on_delete=models.CASCADE)
-    progress = models.IntegerField(max_length=10,null=True,blank=True)
+    progress = models.IntegerField(null=True,blank=True)
     comments = models.TextField(max_length=100,null=True,blank=True)
     date_created = models.DateField(auto_now_add=True)
     def __str__(self):

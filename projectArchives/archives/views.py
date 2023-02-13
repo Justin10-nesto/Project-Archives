@@ -21,8 +21,22 @@ from email.mime.image import MIMEImage
 from RaphaelSomaDIT import rex
 from django.core.files import File
 from .models import *
+from django.http import JsonResponse
 
-
+def check_info(request):
+    type = request.GET.get('type', None)
+    email = request.GET.get('email', None)
+    username = request.GET.get('username', None)
+    data = {}
+    if type == 'email':
+        data = {
+            'is_taken': User.objects.filter(email__iexact=email).exists()
+        }
+    elif type == 'username':
+        data = {
+            'is_taken': User.objects.filter(username__iexact=username).exists()
+        }
+    return JsonResponse(data)
 
 def  login(request):
  try:
@@ -159,7 +173,7 @@ def student(request):
    exclude_perm=[1,2,3,4,13,14,15,16,17,18,19,20,21,22,23,24,37]
    p = Permission.objects.exclude(id__in=exclude_perm)
    
-   s = Student.objects.all()
+   s = Student.objects.all().order_by('NTA_Level')
    d = Department.objects.all()
    g = Group.objects.all()
    
@@ -310,17 +324,112 @@ def department(request):
 
 
 @login_required(login_url='/login')
-def project_type(request):
-   
-   
-   return render(request,'html/dist/project_type.html',{'side':'project_type'})
+def deletedepartment(request,pk):
+   try:
+      Department.objects.filter(id=pk).delete()
+      messages.success(request,'deleted successful')
+      return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
+   except:
+       messages.error(request,'something went wrong')
+       return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
 
+@login_required(login_url='/login')
+def editdepartment(request,pk):
+   try:
+      if request.method=='POST':
+         name = request.POST.get('name')
+         Department.objects.filter(id=pk).update(name=name)
+         messages.success(request,'updated successful')
+         return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
+   except:
+       messages.error(request,'something went wrong') 
+       return HttpResponseRedirect(request.META.get('HTTP_REFERER'))     
+
+@login_required(login_url='/login')
+def project_type(request):
+   t = Project_type.objects.values('department__name','name','id').order_by('id')
+   p = Permission.objects.all()
+   d = Department.objects.all()
+   return render(request,'html/dist/project_type.html',{'side':'project_type','d':d,'t':t})
+
+@login_required(login_url='/login')
+def addprojecttype(request):
+ try:
+   
+   if request.method == "POST":
+      name = request.POST.get("name")
+      department = request.POST.get("department") 
+      Project_type.objects.create(name=name,department_id=department)
+      messages.success(request,'Project Type added successful')
+      return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
+ except:
+      messages.error(request,'something is wrong')
+      return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
+
+def editprojecttype(request,pk):
+   
+   if request.method == "POST":
+      name = request.POST.get("name")
+      department = request.POST.get("department") 
+      if request.user.is_superuser == True:
+       Project_type.objects.filter(id=pk).update(name=name,department_id=department)
+       messages.success(request,'Project Type edited successful')
+       return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+      else:
+        Project_type.objects.filter(id=pk).update(name=name)
+        messages.success(request,'Project Type edited successful')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))  
+ 
+
+
+def deleteprojecttype(request,pk):
+ try:
+      Project_type.objects.filter(id=pk).delete()
+      messages.success(request,'Project Type deleted successful')
+      return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
+ except:
+      messages.error(request,'something is wrong')
+      return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
 
 @login_required(login_url='/login')
 def level(request):
    
    levels = Level.objects.all()
    return render(request,'html/dist/level.html',{'side':'level','level':levels})
+
+@login_required(login_url='/login')
+def deletelevel(request,pk):
+   try:
+      Level.objects.filter(id=pk).delete()
+      messages.success(request,'deleted successful')
+      return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
+   except:
+       messages.error(request,'something went wrong')
+       return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
+
+@login_required(login_url='/login')
+def editlevel(request,pk):
+   try:
+      if request.method=='POST':
+         name = request.POST.get('name')
+         Level.objects.filter(id=pk).update(name=name)
+         messages.success(request,'updated successful')
+         return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
+   except:
+       messages.error(request,'something went wrong') 
+       return HttpResponseRedirect(request.META.get('HTTP_REFERER'))  
+    
+@login_required(login_url='/login')
+def addlevel(request):
+   try:
+      if request.method=='POST':
+         name = request.POST.get('name')
+         Level.objects.create(name=name)
+         messages.success(request,'level created successful')
+         return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
+   except:
+       messages.error(request,'something went wrong') 
+       return HttpResponseRedirect(request.META.get('HTTP_REFERER'))    
 
 @login_required(login_url='/login')
 def deletestudent(request,pk):

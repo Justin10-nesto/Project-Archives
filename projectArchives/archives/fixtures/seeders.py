@@ -79,6 +79,37 @@ data = [
            "permissions": all
         }
     },  
+    
+   {"model": "archives.Project_type","pk": 1,        
+"fields": {"name": "Hardware","department":2,"date_created":str(datetime.datetime.now().date())}
+} , 
+   {"model": "archives.Project_type","pk": 2,        
+"fields": {"name": "Software | Mobile Application","department":2,"date_created":str(datetime.datetime.now().date())}
+} , 
+   
+{"model": "archives.Project_type","pk": 3,        
+"fields": {"name": "Networking","department":2,"date_created":str(datetime.datetime.now().date())}
+} , 
+
+{"model": "archives.Project_type","pk": 4,        
+"fields": {"name": "Embedded","department":2,"date_created":str(datetime.datetime.now().date())}
+} , 
+{"model": "archives.Project_type","pk": 5,        
+"fields": {"name": "Multimedia","department":2,"date_created":str(datetime.datetime.now().date())}
+} ,
+
+{"model": "archives.Project_type","pk": 6,        
+"fields": {"name": "Embedded","department":2,"date_created":str(datetime.datetime.now().date())}
+} , 
+{"model": "archives.Project_type","pk": 7,        
+"fields": {"name": "Digital Siginal Processing","department":2,"date_created":str(datetime.datetime.now().date())}
+} , 
+{"model": "archives.Project_type","pk": 8,        
+"fields": {"name": "Digital Image Processing","department":2,"date_created":str(datetime.datetime.now().date())}
+} ,  
+{"model": "archives.Project_type","pk": 9,        
+"fields": {"name": "AI| ML| Data Mining","department":2,"date_created":str(datetime.datetime.now().date())}
+} , 
    
    ]
 with open('seeders.json', 'w') as f:
