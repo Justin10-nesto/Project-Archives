@@ -33,6 +33,7 @@ class Student(models.Model):
     gender = models.CharField(choices=GENDER, max_length=20)
     regNo =  models.CharField(unique=True,max_length=14)
     NTA_Level = models.IntegerField(null=True,blank=True)
+    level = models.ForeignKey(Level,null=True,blank=True,on_delete=models.CASCADE)
     department = models.ForeignKey(Department,null=True,on_delete=models.CASCADE)
     academic_year = models.CharField(max_length=12)
     mobile = models.CharField(max_length=14, null=True,blank=True)

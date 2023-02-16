@@ -3,7 +3,7 @@ from django.urls import path
 
 urlpatterns = [
     path('', views.dashboard, name='home'),
-    path('check_info/', views.check_info,name='check_info'),
+    
     path('student',views.student,name='student'),
     path('student_od',views.student_od,name='student_od'),
     path('staff',views.staff,name='staff'),
@@ -22,7 +22,7 @@ urlpatterns = [
     path('addprojecttype',views.addprojecttype,name='addprojecttype'),
     path('editprojecttype/<str:pk>',views.editprojecttype,name='editprojecttype'),
      path('deleteprojecttype/<str:pk>',views.deleteprojecttype,name='deleteprojecttype'),
-    # path('adminprofile',views.adminprofile,name='adminprofile'),
+    path('upload_addstaff',views.upload_addstaff,name='upload_addstaff'),
     # path('reviews',views.reviews,name='reviews'),
     path('addlevel',views.addlevel,name='addlevel'),
     # path('adminchangepassword',views.adminchangepassword,name='adminchangepassword'),

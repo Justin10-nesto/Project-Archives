@@ -22,21 +22,18 @@ from RaphaelSomaDIT import rex
 from django.core.files import File
 from .models import *
 from django.http import JsonResponse
+from pdf2image import convert_from_path
+import os
+import csv
 
-def check_info(request):
-    type = request.GET.get('type', None)
-    email = request.GET.get('email', None)
-    username = request.GET.get('username', None)
-    data = {}
-    if type == 'email':
-        data = {
-            'is_taken': User.objects.filter(email__iexact=email).exists()
-        }
-    elif type == 'username':
-        data = {
-            'is_taken': User.objects.filter(username__iexact=username).exists()
-        }
-    return JsonResponse(data)
+
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+poppler_path = os.path.join(PROJECT_DIR, '..', 'poppler-23.01.0', 'Library', 'bin')
+cover = os.path.join(PROJECT_DIR, '..', 'media','coverpage')
+
+
+
 
 def  login(request):
  try:
@@ -138,6 +135,10 @@ def  login(request):
                 students.department_id = 5
             elif 'food' in (rex.level).lower() or 'laboratory' in (rex.level).lower() or 'biotechnology' in (rex.level).lower():
                students.department_id = 6
+            if 'bachelor' in (rex.level).lower():
+                   students.level_id = 1
+            if 'diploma' in (rex.level).lower():
+                   students.level_id = 2
             students.save()
             rex.studentImage(email=request.POST.get("username"), password=request.POST.get("password"))
             with open(rex.regno+".jpg", 'rb') as f:
@@ -156,7 +157,7 @@ def  login(request):
       
       
    
-   return render(request,'html/dist/login.html',{'side':'dashboard'})
+   return render(request,'html/dist/login.html')
  except:
     messages.success(request,'Something went wrong')
 
@@ -165,8 +166,13 @@ def  login(request):
 @login_required(login_url='/login')
 def dashboard(request):
    
-   s = Student.objects.all()
-   return render(request,'html/dist/index.html',{'side':'dashboard','s':s})
+   s = Student.objects.all().count()
+   d = Department.objects.all().count()
+   p = Project.objects.all().count()
+   f  = Staff.objects.all().count()
+   finalB =  Student.objects.filter(NTA_Level=8)
+   finalD =  Student.objects.filter(NTA_Level__lte=6)
+   return render(request,'html/dist/index.html',{'side':'dashboard','s':s,'d':d,'f':f,'p':p,'b':finalB,'o':finalD})
 
 @login_required(login_url='/login')
 def student(request):
@@ -220,7 +226,7 @@ def addstudent(request):
 
 @login_required(login_url='/login')
 def addstaff(request):
- try:
+
    if request.method == "POST":
       
       name = request.POST.get('name')
@@ -242,15 +248,19 @@ def addstaff(request):
       if users and user:
          messages.error(request,'Staff exists')
          return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-         
+      # images = convert_from_path('C:\\Users\\Raphael\\OneDrive\\Desktop\\file\\pdf\\RSM.pdf',poppler_path=poppler_path)
+
+      # # Save pages as images in the pdf
+      # images[0].save(f'{cover}\\page' +'.jpg', 'JPEG') 
       u = User.objects.create(username=email,email=email,password=password,first_name=name)
       Staff.objects.create(user=u,staff_id=staff_id,mobile=mobile,department_id=departments,gender=gender,level=level)
       u.groups.add(group)
+   
       messages.success(request,'Staff created successful')
       return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
- except:
-    messages.error(request,'Something went wrong')
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+#  except:
+#     messages.error(request,'Something went wrong')
+#     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
  
  
 @login_required(login_url='/login')
@@ -599,3 +609,36 @@ def editstaff(request,pk):
 #  except:
 #     messages.error(request,'Something went wrong')
 #     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+def upload_addstaff(request):
+        if request.method == 'POST':
+         file_data = request.FILES['file']
+         decoded_file = file_data.read().decode('utf-8').splitlines()
+         reader = csv.DictReader(decoded_file)
+         for row in reader:
+                dept_id = Department.objects.get(name=row['department'])
+                role_id = Group.objects.get(name=row['role'])
+                user = User.objects.create(
+                    first_name=row['name'],
+                    email=row['email'],
+                    username=row['email'],
+                    is_staff = True  ,
+                    password = make_password('@DIT123'),
+                    
+                )
+                
+                u = User.objects.get(username=row['email'])
+                u.groups.add(role_id,)
+                Staffs = Staff.objects.create(
+                    user = user,
+                    gender=row['gender'],
+                    staff_id=row['staff_id'],
+                    mobile = row['mobile'],
+                    department = dept_id ,
+                     
+                )
+                
+        messages.success(request,'Staff created successful')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    

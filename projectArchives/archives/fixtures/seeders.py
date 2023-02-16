@@ -5,10 +5,10 @@ for i in range(1,57):
     all.append(i)
 data = [    
     {"model": "archives.level","pk": 1,        
-"fields": {"name": "BEING","date_created":str(datetime.datetime.now().date())}
+"fields": {"name": "BACHELOR DEGREE","date_created":str(datetime.datetime.now().date())}
 },
     {        "model": "archives.level","pk": 2,        
-"fields": {"name": "OD","date_created":str(datetime.datetime.now().date())}
+"fields": {"name": "ORDINARY DIPLOMA","date_created":str(datetime.datetime.now().date())}
 },
     {"model": "archives.Department","pk": 1,        
 "fields": {"name": "CIVIL"}
