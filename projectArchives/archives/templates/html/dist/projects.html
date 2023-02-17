@@ -1,0 +1,489 @@
+{%load static %}
+{% include "includes/header.html" %}
+{% include "includes/sidebar.html" %}
+<style>
+
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+.containers{
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+} 
+
+.card-contents{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.cards{
+  {% comment %} position: relative; {% endcomment %}
+  background: #fff;
+  max-width: 320px;
+  width: 300px;
+  height: auto;
+  margin: 5px;
+  box-shadow: 0 5px 25px rgb(1 1 1 / 20%);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.card-images{
+  max-height: 450px;
+}
+
+.card-images img{
+  max-width: 100%;
+  height: auto;
+}
+
+.card-infos{
+  position: relative;
+  color: #222;
+  padding: 10px 20px 20px;
+}
+
+.card-infos h3{
+  font-size: 1.8em;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+
+.card-infos p{
+  font-size: 1em;
+  margin-bottom: 5px;
+}
+
+.pagination{
+  text-align: center;
+  margin: 30px 30px 60px;
+  user-select: none;
+}
+
+.pagination li{
+  {% comment %} display: inline-block; {% endcomment %}
+  margin: 5px;
+  box-shadow: 0 5px 25px rgb(1 1 1 / 10%);
+}
+
+.pagination li a{
+  {% comment %} color: #fff; {% endcomment %}
+  text-decoration: none;
+  font-size: 1.2em;
+  {% comment %} line-height: 45px; {% endcomment %}
+}
+
+.previous-page, .next-page{
+  {% comment %} background: #0AB1CE; {% endcomment %}
+  {% comment %} width: 80px; {% endcomment %}
+  {% comment %} border-radius: 45px; {% endcomment %}
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.previous-page:hover{
+  transform: translateX(-5px);
+}
+
+.next-page:hover{
+  transform: translateX(5px);
+}
+
+.current-page, .dots{
+  background: #ccc;
+  {% comment %} width: 45px; {% endcomment %}
+  {% comment %} border-radius: 50%; {% endcomment %}
+  cursor: pointer;
+}
+
+.active{
+  background: #0AB1CE;
+}
+
+.disable{
+  background: #ccc;
+}
+</style>
+    
+      <div class="card-contents">
+        <div class="cards">
+          <div class="card-images"><img src="{% static 'assets/img/page.jpg' %}" alt=""></div>
+          <div class="card-infos">
+            <h3>Card 01</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          </div>
+        </div>
+          <div class="cards">
+          <div class="card-images"><img src="{% static 'assets/img/page.jpg' %}" alt=""></div>
+          <div class="card-infos">
+            <h3>Card 02</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          </div>
+        </div>
+          <div class="cards">
+          <div class="card-images"><img src="{% static 'assets/img/page.jpg' %}" alt=""></div>
+          <div class="card-infos">
+            <h3>Card 02</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          </div>
+        </div>
+          <div class="cards">
+          <div class="card-images"><img src="{% static 'assets/img/page.jpg' %}" alt=""></div>
+          <div class="card-infos">
+            <p>Card 01<p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          </div>
+        </div>
+        <div class="cards">
+          <div class="card-images"><img src="{% static 'assets/img/page.jpg' %}" alt=""></div>
+          <div class="card-infos">
+            <h3>Card 01</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          </div>
+        </div>
+        <div class="cards">
+          <div class="card-images"><img src="{% static 'assets/img/page.jpg' %}" alt=""></div>
+          <div class="card-infos">
+            <h3>Card 01</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          </div>
+        </div>
+        <div class="cards">
+          <div class="card-images"><img src="{% static 'assets/img/page.jpg' %}" alt=""></div>
+          <div class="card-infos">
+            <h3>Card 01</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          </div>
+        </div>
+        <div class="cards">
+          <div class="card-images"><img src="{% static 'assets/img/page.jpg' %}" alt=""></div>
+          <div class="card-infos">
+            <h3>Card 01</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          </div>
+        </div>
+        <div class="cards">
+          <div class="card-images"><img src="{% static 'assets/img/page.jpg' %}" alt=""></div>
+          <div class="card-infos">
+            <h3>RAPHAEL</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          </div>
+        </div>
+        <div class="pagination">
+         
+        </div>
+      </div>
+    </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" charset="utf-8"></script>
+<script type="text/javascript">
+function getPageList(totalPages, page, maxLength){
+  function range(start, end){
+    return Array.from(Array(end - start + 1), (_, i) => i + start);
+  }
+
+  var sideWidth = maxLength < 9 ? 1 : 2;
+  var leftWidth = (maxLength - sideWidth * 2 - 3) >> 1;
+  var rightWidth = (maxLength - sideWidth * 2 - 3) >> 1;
+
+  if(totalPages <= maxLength){
+    return range(1, totalPages);
+  }
+
+  if(page <= maxLength - sideWidth - 1 - rightWidth){
+    return range(1, maxLength - sideWidth - 1).concat(0, range(totalPages - sideWidth + 1, totalPages));
+  }
+
+  if(page >= totalPages - sideWidth - 1 - rightWidth){
+    return range(1, sideWidth).concat(0, range(totalPages- sideWidth - 1 - rightWidth - leftWidth, totalPages));
+  }
+
+  return range(1, sideWidth).concat(0, range(page - leftWidth, page + rightWidth), 0, range(totalPages - sideWidth + 1, totalPages));
+}
+
+$(function(){
+  var numberOfItems = $(".card-contents .cards").length;
+  var limitPerPage = 6; //How many card items visible per a page
+  var totalPages = Math.ceil(numberOfItems / limitPerPage);
+  var paginationsSize = 7; //How many page elements visible in the paginations
+  var currentPage;
+
+  function showPage(whichPage){
+    if(whichPage < 1 || whichPage > totalPages) return false;
+
+    currentPage = whichPage;
+
+    $(".card-contents .cards").hide().slice((currentPage - 1) * limitPerPage, currentPage * limitPerPage).show();
+
+    $(".pagination li").slice(1, -1).remove();
+
+    getPageList(totalPages, currentPage, paginationsSize).forEach(item => {
+      $("<li>").addClass("page-item").addClass(item ? "current-page" : "dots")
+      .toggleClass("active", item === currentPage).append($("<a>").addClass("page-link")
+      .attr({href: "javascript:void(0)"}).text(item || "...")).insertBefore(".next-page");
+    });
+
+    $(".previous-page").toggleClass("disable", currentPage === 1);
+    $(".next-page").toggleClass("disable", currentPage === totalPages);
+    return true;
+  }
+
+  $(".pagination").append(
+    $("<li>").addClass("page-item").addClass("previous-page").append($("<a>").addClass("page-link").attr({href: "javascript:void(0)"}).text("Prev")),
+    $("<li>").addClass("page-item").addClass("next-page").append($("<a>").addClass("page-link").attr({href: "javascript:void(0)"}).text("Next"))
+  );
+
+  $(".card-contents").show();
+  showPage(1);
+
+  $(document).on("click", ".pagination li.current-page:not(.active)", function(){
+    return showPage(+$(this).text());
+  });
+
+  $(".next-page").on("click", function(){
+    return showPage(currentPage + 1);
+  });
+
+  $(".previous-page").on("click", function(){
+    return showPage(currentPage - 1);
+  });
+});
+</script>
+
+  
+{% include "includes/footer.html"%}
+<div class="theme-config">
+    <div class="theme-config-toggle"><i class="fa fa-cog theme-config-show"></i><i class="ti-close theme-config-close"></i></div>
+    <div class="theme-config-box">
+        <div class="text-center font-18 m-b-20">SEARCH</div>
+        <div class="font-strong">LAYOUT OPTIONS</div>
+        <div class="check-list m-b-20 m-t-10">
+            <form>
+                <label for="dropdown1">Dropdown 1:</label>
+                <select id="dropdown1">
+                  <option value="">Select an option</option>
+                  <option value="card 01">Option 1</option>
+                  <option value="raphael">Option 2</option>
+                  <option value="option3">Option 3</option>
+                </select>
+                <br>
+                <label for="dropdown2">Dropdown 2:</label>
+                <select id="dropdown2">
+                  <option value="">Select an option</option>
+                  <option value="lorem">Option 4</option>
+                  <option value="option5">Option 5</option>
+                  <option value="option6">Option 6</option>
+                </select>
+                <br>
+                <label for="textinput">Text Input:</label>
+                <input type="text" id="myInputs">
+              </form>
+        </div>
+        
+        </div>
+    </div>
+</div>
+<!-- END THEME CONFIG PANEL-->
+<!-- BEGIN PAGA BACKDROPS-->
+<div class="sidenav-backdrop backdrop"></div>
+<div class="preloader-backdrop">
+    <div class="page-preloader">Loading</div>
+</div>
+<script>
+    function filterCards() {
+        var input, filter, cards, cardInfo, i, txtValue, dropdown1, dropdown2;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        cards = document.getElementsByClassName("cards");
+        dropdown1 = document.getElementById("dropdown1").value.toUpperCase();
+        dropdown2 = document.getElementById("dropdown2").value.toUpperCase();
+        
+        // Filter cards based on search input
+        for (i = 0; i < cards.length; i++) {
+          cardInfo = cards[i].querySelector(".card-infos");
+          
+          txtValue = cardInfo.textContent || cardInfo.innerText;
+          
+          if ((txtValue.toUpperCase().indexOf(filter) > -1)) {
+            cards[i].style.display = "";
+          } else {
+            cards[i].style.display = "none";
+          }
+        }
+      
+        // Reset pagination when search input is cleared
+        if (filter === "") {
+          var pagination = document.querySelector(".pagination");
+          pagination.style.display = "";
+          showCards(1);
+        } else {
+          var visibleCards = document.querySelectorAll(".cards:not([style*='none'])");
+          var cardCount = visibleCards.length;
+      
+          // Hide pagination if search result fits on one page
+          if (cardCount <= 6) {
+            var pagination = document.querySelector(".pagination");
+            pagination.style.display = "none";
+          }
+        }
+      }
+      
+      
+      document.getElementById("myInput").addEventListener("input", filterCards);
+        document.getElementById("dropdown1").addEventListener("change", filterCards);
+        document.getElementById("dropdown2").addEventListener("change", filterCards);
+
+      
+      function showCards(page) {
+        var cards = document.querySelectorAll(".cards:not([style*='none'])");
+        var start = (page - 1) * 6;
+        var end = start + 6;
+      
+        // Show only cards on the current page
+        for (var i = 0; i < cards.length; i++) {
+          if (i >= start && i < end) {
+            cards[i].style.display = "";
+          } else {
+            cards[i].style.display = "none";
+          }
+        }
+      }
+      
+      function setupPagination() {
+        var cards = document.querySelectorAll(".cards:not([style*='none'])");
+        var cardCount = cards.length;
+        var pageCount = Math.ceil(cardCount / 6);
+      
+        // Create page buttons for each page
+        for (var i = 1; i <= pageCount; i++) {
+          var button = document.createElement("button");
+          button.innerText = i;
+      
+          // Set the first page as active by default
+          if (i === 1) {
+            button.classList.add("active");
+          }
+      
+          // Show cards on the corresponding page when button is clicked
+          button.addEventListener("click", function() {
+            var currentBtn = document.querySelector(".pagination button.active");
+            currentBtn.classList.remove("active");
+      
+            this.classList.add("active");
+            showCards(this.innerText);
+          });
+      
+          document.querySelector(".pagination").appendChild(button);
+        }
+      }
+      
+      {% comment %} setupPagination(); {% endcomment %}
+      
+  </script>
+
+
+
+<script>
+    function filterCards() {
+        var input, filter, cards, cardInfo, i, txtValue, dropdown1, dropdown2;
+        input = document.getElementById("myInputs");
+        filter = input.value.toUpperCase();
+        cards = document.getElementsByClassName("cards");
+        dropdown1 = document.getElementById("dropdown1").value.toUpperCase();
+        dropdown2 = document.getElementById("dropdown2").value.toUpperCase();
+        // Filter cards based on search input
+        for (i = 0; i < cards.length; i++) {
+          cardInfo = cards[i].querySelector(".card-infos");
+          txtValue = cardInfo.textContent || cardInfo.innerText;
+          
+          if ((txtValue.toUpperCase().indexOf(filter) > -1) &&
+          (dropdown1 === "" || txtValue.toUpperCase().includes(dropdown1)) &&
+          (dropdown2 === "" || txtValue.toUpperCase().includes(dropdown2))) {
+            cards[i].style.display = "";
+          } else {
+            cards[i].style.display = "none";
+          }
+        }
+      
+        // Reset pagination when search input is cleared
+        if (filter === "") {
+          var pagination = document.querySelector(".pagination");
+          pagination.style.display = "";
+          showCards(1);
+        } else {
+          var visibleCards = document.querySelectorAll(".cards:not([style*='none'])");
+          var cardCount = visibleCards.length;
+      
+          // Hide pagination if search result fits on one page
+          if (cardCount <= 6) {
+            var pagination = document.querySelector(".pagination");
+            pagination.style.display = "none";
+          }
+        }
+      }
+      
+      
+      document.getElementById("myInputs").addEventListener("input", filterCards);
+        document.getElementById("dropdown1").addEventListener("change", filterCards);
+        document.getElementById("dropdown2").addEventListener("change", filterCards);
+
+      
+      function showCards(page) {
+        var cards = document.querySelectorAll(".cards:not([style*='none'])");
+        var start = (page - 1) * 6;
+        var end = start + 6;
+      
+        // Show only cards on the current page
+        for (var i = 0; i < cards.length; i++) {
+          if (i >= start && i < end) {
+            cards[i].style.display = "";
+          } else {
+            cards[i].style.display = "none";
+          }
+        }
+      }
+      
+      function setupPagination() {
+        var cards = document.querySelectorAll(".cards:not([style*='none'])");
+        var cardCount = cards.length;
+        var pageCount = Math.ceil(cardCount / 6);
+      
+        // Create page buttons for each page
+        for (var i = 1; i <= pageCount; i++) {
+          var button = document.createElement("button");
+          button.innerText = i;
+      
+          // Set the first page as active by default
+          if (i === 1) {
+            button.classList.add("active");
+          }
+      
+          // Show cards on the corresponding page when button is clicked
+          button.addEventListener("click", function() {
+            var currentBtn = document.querySelector(".pagination button.active");
+            currentBtn.classList.remove("active");
+      
+            this.classList.add("active");
+            showCards(this.innerText);
+          });
+      
+          document.querySelector(".pagination").appendChild(button);
+        }
+      }
+      
+      {% comment %} setupPagination(); {% endcomment %}
+      
+  </script>
+            {% include "includes/js.html "%}

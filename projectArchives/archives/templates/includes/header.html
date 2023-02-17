@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PROJECT ARCHIVES </title>
     <!-- GLOBAL MAINLY STYLES-->
+    <link rel="stylesheet" href="{% static 'style.css' %}">
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/css/dataTables.bootstrap.min.css'>
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,500" rel="stylesheet"/>
@@ -22,7 +23,7 @@
     <!-- THEME STYLES-->
     <link href="{% static 'assets/css/main.min.css' %}" rel="stylesheet" />
     {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
-    <link rel="stylesheet" href="{% static 'style.css' %}">
+    
     {% comment %} <script src="https://kit.fontawesome.com/a076d05399.js"></script> {% endcomment %}
 
     <style>
@@ -156,7 +157,7 @@
                         <form class="navbar-search" action="javascript:;">
                             <div class="rel">
                                 <span class="search-icon"><i class="ti-search"></i></span>
-                                <input class="form-control" placeholder="Search here...">
+                                <input class="form-control" type="text" id="myInput" placeholder="Search here...">
                             </div>
                         </form>
                     </li>
@@ -295,6 +296,7 @@
                 <!-- END TOP-RIGHT TOOLBAR-->
             </div>
         </header>
+        
         <!-- END HEADER-->
         <!-- START SIDEBAR-->
         

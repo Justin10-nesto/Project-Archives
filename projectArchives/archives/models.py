@@ -75,10 +75,10 @@ class Project_type(models.Model):
         db_table = "project_type"
         
 class Project(models.Model):
-    title = models.CharField
+    title = models.CharField(null=True,blank=True,max_length=50)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    project_type = models.ForeignKey(Project_type,on_delete=models.CASCADE)
-    department = models.ForeignKey(Department,on_delete=models.CASCADE)
+    project_type = models.ForeignKey(Project_type,on_delete=models.CASCADE,null=True,blank=True)
+    department = models.ForeignKey(Department,on_delete=models.CASCADE,null=True,blank=True)
     cover = models.ImageField(upload_to='cover', null=True, blank=True)
     date_created = models.DateField(auto_now_add=True)
     
@@ -94,6 +94,7 @@ class Project(models.Model):
 class Document(models.Model):
     project = models.ForeignKey(Project,on_delete=models.CASCADE)
     file = models.FileField(upload_to='projects')
+    submitted = models.BooleanField(null=True,blank=True,default=False)
     date_created = models.DateField(auto_now_add=True)
     def __str__(self):
         return self.file
@@ -101,9 +102,9 @@ class Document(models.Model):
     class Meta:
         db_table = "document"       
 
-class progress(models.Model):
-    project = models.ForeignKey(Document,on_delete=models.CASCADE)
-    staff = models.ForeignKey(Staff,on_delete=models.CASCADE)
+class Progress(models.Model):
+    document = models.ForeignKey(Document,on_delete=models.CASCADE,null=True,blank=True)
+    staff = models.ForeignKey(Staff,on_delete=models.CASCADE,null=True,blank=True)
     progress = models.IntegerField(null=True,blank=True)
     comments = models.TextField(max_length=100,null=True,blank=True)
     date_created = models.DateField(auto_now_add=True)

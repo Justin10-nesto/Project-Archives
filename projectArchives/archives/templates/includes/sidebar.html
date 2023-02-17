@@ -1,5 +1,5 @@
 {% load static %}
-<nav class="page-sidebar" id="sidebar">
+<nav class="page-sidebar" id="sidebars">
     <div id="sidebar-collapse">
         <div class="admin-block d-flex">
             <div>
@@ -80,6 +80,20 @@
         </ul>
     </div>
 </nav>
+<style>
+
+    .page-sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        {% comment %} width: 250px; {% endcomment %}
+        overflow-y: auto;
+       
+        z-index: 9999;
+      }
+      
+</style>
 <div class="content-wrapper">
 
    

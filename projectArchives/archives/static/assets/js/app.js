@@ -83,8 +83,12 @@ $(function () {
                 railOpacity: '0.9',
             });
         } else {
-            $('#sidebar-collapse').slimScroll({destroy: true}).css({overflow: 'visible', height: 'auto'});
-            $('body').removeClass('fixed-layout');
+           
+            $('body').addClass('fixed-layout');
+            $('#sidebar-collapse').slimScroll({
+                height: '100%',
+                railOpacity: '0.9',
+            });
         }
     });
 

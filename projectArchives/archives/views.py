@@ -40,6 +40,7 @@ def  login(request):
    user = User()
    students = Student()
    staffs = Staff()
+   project = Project()
    
    if request.method == 'POST':
       email=request.POST.get("username")
@@ -140,6 +141,13 @@ def  login(request):
             if 'diploma' in (rex.level).lower():
                    students.level_id = 2
             students.save()
+            if 'diploma' in (rex.level).lower() and rex.NTA_level == 6:
+                   project.student = students
+                   project.department = user.department
+            elif 'bachelor' in (rex.level).lower() and rex.NTA_level == 8:
+                   project.student = students
+                   project.department = user.department
+            project.save()    
             rex.studentImage(email=request.POST.get("username"), password=request.POST.get("password"))
             with open(rex.regno+".jpg", 'rb') as f:
                django_file = File(f)
@@ -170,8 +178,8 @@ def dashboard(request):
    d = Department.objects.all().count()
    p = Project.objects.all().count()
    f  = Staff.objects.all().count()
-   finalB =  Student.objects.filter(NTA_Level=8)
-   finalD =  Student.objects.filter(NTA_Level__lte=6)
+   finalB =  Progress.objects.filter(document__project__student__NTA_Level=8)
+   finalD =  Student.objects.filter(NTA_Level=6)
    return render(request,'html/dist/index.html',{'side':'dashboard','s':s,'d':d,'f':f,'p':p,'b':finalB,'o':finalD})
 
 @login_required(login_url='/login')
@@ -641,4 +649,9 @@ def upload_addstaff(request):
                 
         messages.success(request,'Staff created successful')
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-    
+
+
+def projects(request):
+   
+   
+   return render(request,'html/dist/projects.html')
