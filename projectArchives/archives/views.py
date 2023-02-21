@@ -40,7 +40,9 @@ def  login(request):
    user = User()
    students = Student()
    staffs = Staff()
-   project = Project()
+   projects = Project()
+ 
+   
    
    if request.method == 'POST':
       email=request.POST.get("username")
@@ -124,6 +126,7 @@ def  login(request):
             students.mobile = rex.mobile
             students.gender = rex.gender
             students.course = rex.level
+         
             if 'computer' in (rex.level).lower() or 'information' in (rex.level).lower() or 'multimedia' in (rex.level).lower():
                students.department_id = 2
             elif 'civil' in (rex.level).lower() or 'mining' in (rex.level).lower() or 'gas' in (rex.level).lower():
@@ -141,13 +144,20 @@ def  login(request):
             if 'diploma' in (rex.level).lower():
                    students.level_id = 2
             students.save()
+            us = Student.objects.get(user__username=email)
+            print(us.id)
             if 'diploma' in (rex.level).lower() and rex.NTA_level == 6:
-                   project.student = students
-                   project.department = user.department
+                   projects.student_id = students
+                   projects.department_id = students.department
+                   projects.save()
+                  #  doc = Document.objects.create(project=projects)
+                  #  Progress.objects.create(document=doc)
             elif 'bachelor' in (rex.level).lower() and rex.NTA_level == 8:
-                   project.student = students
-                   project.department = user.department
-            project.save()    
+                   projects.student_id = students
+                   projects.department_id = students.department
+                   projects.save()
+                  #  doc = Document.objects.create(project=projects)
+                  #  Progress.objects.create(document=doc)
             rex.studentImage(email=request.POST.get("username"), password=request.POST.get("password"))
             with open(rex.regno+".jpg", 'rb') as f:
                django_file = File(f)
@@ -160,14 +170,10 @@ def  login(request):
                return redirect('/')
          
             return redirect('/login')
-         
-         
-      
-      
-   
    return render(request,'html/dist/login.html')
  except:
     messages.success(request,'Something went wrong')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 
@@ -178,7 +184,7 @@ def dashboard(request):
    d = Department.objects.all().count()
    p = Project.objects.all().count()
    f  = Staff.objects.all().count()
-   finalB =  Progress.objects.filter(document__project__student__NTA_Level=8)
+   finalB =  Progress.objects.filter()
    finalD =  Student.objects.filter(NTA_Level=6)
    return render(request,'html/dist/index.html',{'side':'dashboard','s':s,'d':d,'f':f,'p':p,'b':finalB,'o':finalD})
 
@@ -485,7 +491,7 @@ def manageroles(request):
       exclude_perm=[1,2,3,4,13,14,15,16,17,18,19,20,21,22,23,24]
       p = Permission.objects.exclude(id__in=exclude_perm)
       
-      return render(request,'html/dist/manageroles.html',{'p':p,'g':g})
+      return render(request,'html/dist/manageroles.html',{'side':'role','p':p,'g':g})
 
 @login_required(login_url='/login')
 def addroles(request):

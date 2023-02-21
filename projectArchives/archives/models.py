@@ -58,7 +58,7 @@ class Staff(models.Model):
     level = models.OneToOneField(Level,null=True,blank=True,on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.staff_id
+        return self.user.first_name
 
     class Meta:
         db_table = "Staff"
@@ -76,7 +76,7 @@ class Project_type(models.Model):
         
 class Project(models.Model):
     title = models.CharField(null=True,blank=True,max_length=50)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.OneToOneField(Student, on_delete=models.CASCADE)
     project_type = models.ForeignKey(Project_type,on_delete=models.CASCADE,null=True,blank=True)
     department = models.ForeignKey(Department,on_delete=models.CASCADE,null=True,blank=True)
     cover = models.ImageField(upload_to='cover', null=True, blank=True)
@@ -92,24 +92,26 @@ class Project(models.Model):
 
 
 class Document(models.Model):
-    project = models.ForeignKey(Project,on_delete=models.CASCADE)
+    project = models.OneToOneField(Project,on_delete=models.CASCADE)
     file = models.FileField(upload_to='projects')
     submitted = models.BooleanField(null=True,blank=True,default=False)
     date_created = models.DateField(auto_now_add=True)
+    
     def __str__(self):
-        return self.file
+        return str(self.id)
 
     class Meta:
         db_table = "document"       
 
 class Progress(models.Model):
-    document = models.ForeignKey(Document,on_delete=models.CASCADE,null=True,blank=True)
+    document = models.OneToOneField(Document,on_delete=models.CASCADE,null=True,blank=True)
     staff = models.ForeignKey(Staff,on_delete=models.CASCADE,null=True,blank=True)
-    progress = models.IntegerField(null=True,blank=True)
-    comments = models.TextField(max_length=100,null=True,blank=True)
+    prog = models.IntegerField(null=True,blank=True)
+    comments = models.TextField(max_length=100,null=True,blank=True) 
     date_created = models.DateField(auto_now_add=True)
+    
     def __str__(self):
-        return self.progress
+        return str(self.prog)
 
     class Meta:
         db_table = "progress"  

@@ -327,7 +327,9 @@ $(function(){
         if (filter === "") {
           var pagination = document.querySelector(".pagination");
           pagination.style.display = "";
+          
           showCards(1);
+          
         } else {
           var visibleCards = document.querySelectorAll(".cards:not([style*='none'])");
           var cardCount = visibleCards.length;
@@ -337,7 +339,22 @@ $(function(){
             var pagination = document.querySelector(".pagination");
             pagination.style.display = "none";
           }
+          
         }
+        var visibleCards = document.querySelectorAll(".cards:not([style*='none'])");
+        if (visibleCards.length === 0) {
+          // Show the "no file found" message
+          var noResult = document.createElement("p");
+          noResult.innerText = "No files found.";
+          document.querySelector(".card-container").appendChild(noResult);
+        } else {
+          // Remove the "no file found" message if it was previously shown
+          var noResult = document.querySelector(".card-container p");
+          if (noResult) {
+            noResult.remove();
+          }
+        }
+        
       }
       
       
