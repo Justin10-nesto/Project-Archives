@@ -35,7 +35,7 @@
 	<link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/all.min.css'%}">
 	
 	<!-- Main CSS -->
-	<link rel="stylesheet" href="{% static 'assets/css/style.css'%}">
+	{% comment %} <link rel="stylesheet" href="{% static 'assets/css/style.css'%}"> {% endcomment %}
 	
 
 </head>
@@ -46,14 +46,21 @@
         <div class="main-wrapper login-body">
             <div class="login-wrapper">
             	<div class="container">
-					
+					{% if messages %}
+  
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show md-6" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
                 	<div class="loginbox">
                     	<div class="login-left">
 							<img class="img-fluid" src="{% static 'assets/img/dit.png'%}" alt="Logo">
                         </div>
                         <div class="login-right">
 							<div class="login-right-wrap">
-                                {% include "includes/messages.html" %}
+                                
 								<h1>Login</h1>
 							
 								
@@ -86,14 +93,22 @@
 		<!-- /Main Wrapper -->
 		
 		<!-- jQuery -->
-        <script src="assets/js/jquery-3.2.1.min.js"></script>
+        {% comment %} <script src="assets/js/jquery-3.2.1.min.js"></script> {% endcomment %}
 		
 		<!-- Bootstrap Core JS -->
         <script src="assets/js/popper.min.js"></script>
         <script src="assets/js/bootstrap.min.js"></script>
 		
 		<!-- Custom JS -->
-		<script src="assets/js/script.js"></script>
+
+		{% comment %} <script src="assets/js/script.js"></script> {% endcomment %}
+		<script>
+			window.setTimeout(function() {
+				$(".alert").fadeTo(500, 0).slideUp(500, function(){
+					$(this).remove();
+				});
+			}, 3000);
+		</script>
 		<script>
 			function myFunction() {
 				var x = document.getElementById("myInput");

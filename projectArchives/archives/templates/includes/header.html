@@ -286,8 +286,9 @@
                             <span></span>{{u}}<i class="fa fa-angle-down m-l-5"></i></a>
                         <ul class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item" href="profile.html"><i class="fa fa-user"></i>Profile</a>
-                            <a class="dropdown-item" href="profile.html"><i class="fa fa-cog"></i>Settings</a>
-                            <a class="dropdown-item" href="javascript:;"><i class="fa fa-support"></i>Support</a>
+                            <a class="dropdown-item" href="#profile" data-toggle="modal"
+                            ><i class="fa fa-cog"></i>Password</a>
+                            {% comment %} <a class="dropdown-item" href="javascript:;"><i class="fa fa-support"></i>Support</a> {% endcomment %}
                             <li class="dropdown-divider"></li>
                             <a class="dropdown-item" href="/logout"><i class="fa fa-power-off"></i>Logout</a>
                         </ul>
@@ -295,8 +296,79 @@
                 </ul>
                 <!-- END TOP-RIGHT TOOLBAR-->
             </div>
+           
         </header>
+        <div>
+            <form method="post" action="/changepassword">
+                {% csrf_token %}
+                <div class="modal fade" id="profile">
+                    <div class="modal-dialog profile">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Change Password</h4>
+                                {% comment %} <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button> {% endcomment %}
+                            </div>
+                            <div class="modal-body">
+                                <p>
+                                <div class="row">
+                                    <div class="col col-md-12">
+                                        <label>Old Password</label>
+                                        <input type="Password" id="myInputz" name="old" class="form-control"
+                                            placeholder="old Password">
+                                    </div>
+                                    <div class="col col-md-12">
+                                        <label>New Password</label>
+                                        <input type="Password" id="myInputx" name="new" class="form-control"
+                                            placeholder="New Password">
+                                    </div>
+                                    <div class="col col-md-12">
+                                        <label>Comfirm Password</label>
+                                        <input type="Password" id="myInputy" name="comf" class="form-control"
+                                            placeholder="Comfirm Password">
+                                    </div>
+                                    <br><br>
+                                    <div class="col col-md-12">
+                                        <input type="checkbox" onclick="myFunction()">Show Password 
+                                        </div>
+                                </div>
+                                
+                                </p>
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                <button name="addproduct" class="btn btn-primary ">Submit</button>
+                                
+                            </div>
+                            
+                        </div>
         
+                        
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+            </form>
+        </div>
+
+        <script>
+			function myFunction() {
+				var z = document.getElementById("myInputz");
+                var y = document.getElementById("myInputy");
+                var x = document.getElementById("myInputx");
+				if (x.type === "password" && y.type === "password" && z.type === "password") {
+				  x.type = "text";
+                  y.type = "text";
+                  z.type = "text";
+				} else {
+				  x.type = "password";
+                  y.type = "password";
+                  z.type = "password";
+				}
+			  } 
+		</script>
         <!-- END HEADER-->
         <!-- START SIDEBAR-->
         

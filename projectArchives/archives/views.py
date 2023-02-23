@@ -31,6 +31,7 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 poppler_path = os.path.join(PROJECT_DIR, '..', 'poppler-23.01.0', 'Library', 'bin')
 cover = os.path.join(PROJECT_DIR, '..', 'media','coverpage')
+profile = os.path.join(PROJECT_DIR, '..', 'media','profile_pic')
 
 
 
@@ -119,6 +120,9 @@ def  login(request):
             user.email = rex.email
             user.password = make_password(request.POST.get("password"))
             user.save()
+            # course = (rex.level).split()
+            # course = course[-2] +" "+ course[-1]
+            # print(course)
             students.user = user
             students.regNo = rex.regno
             students.NTA_Level = rex.NTA_level
@@ -145,21 +149,27 @@ def  login(request):
                    students.level_id = 2
             students.save()
             us = Student.objects.get(user__username=email)
-            print(us.id)
-            if 'diploma' in (rex.level).lower() and rex.NTA_level == 6:
-                   projects.student_id = students
-                   projects.department_id = students.department
-                   projects.save()
+            print(f'{rex.NTA_level}:{rex.level}')
+            if rex.NTA_level == '6' and 'diploma' in (rex.level).lower():
+                   projects.student_id = us.id
+                   projects.department_id = us.department_id
+                  
+                  #  projects.save()
                   #  doc = Document.objects.create(project=projects)
                   #  Progress.objects.create(document=doc)
-            elif 'bachelor' in (rex.level).lower() and rex.NTA_level == 8:
-                   projects.student_id = students
-                   projects.department_id = students.department
-                   projects.save()
-                  #  doc = Document.objects.create(project=projects)
-                  #  Progress.objects.create(document=doc)
+            if 'bachelor' in (rex.level).lower() and rex.NTA_level == '8':
+                    projects.student_id = us.id
+                    projects.department_id = us.department_id
+                  
+            projects.save()  
+            p = Project.objects.get(student_id=us.id)
+            Document.objects.create(project_id=p.id)
+            f = Document.objects.get(project_id=p.id)
+            Progress.objects.create(document_id=f.id)
             rex.studentImage(email=request.POST.get("username"), password=request.POST.get("password"))
+            
             with open(rex.regno+".jpg", 'rb') as f:
+               
                django_file = File(f)
                students.photo.save(rex.regno+".jpg", django_file, save=True)
             os.remove(rex.regno+".jpg")
@@ -184,7 +194,7 @@ def dashboard(request):
    d = Department.objects.all().count()
    p = Project.objects.all().count()
    f  = Staff.objects.all().count()
-   finalB =  Progress.objects.filter()
+   finalB =  Progress.objects.all()
    finalD =  Student.objects.filter(NTA_Level=6)
    return render(request,'html/dist/index.html',{'side':'dashboard','s':s,'d':d,'f':f,'p':p,'b':finalB,'o':finalD})
 
@@ -229,11 +239,26 @@ def addstudent(request):
       if users and user:
          messages.error(request,'Student exists')
          return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-         
-      u = User.objects.create(username=email,email=email,password=password,first_name=name)
-      Student.objects.create(user=u,regNo=regNo,mobile=mobile,academic_year=academic_year,NTA_Level=NTA_Level,course=course,department_id=departments,gender=gender)
-      messages.success(request,'Student created successful')
-      return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+      if NTA_Level==8:
+       u = User.objects.create(username=email,email=email,password=password,first_name=name)
+       Student.objects.create(user=u,regNo=regNo,mobile=mobile,academic_year=academic_year,level_id=1,NTA_Level=NTA_Level,course=course,department_id=departments,gender=gender)
+       messages.success(request,'Student created successful')
+       return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+      elif NTA_Level==6:
+       u = User.objects.create(username=email,email=email,password=password,first_name=name)
+       Student.objects.create(user=u,regNo=regNo,mobile=mobile,academic_year=academic_year,level_id=2,NTA_Level=NTA_Level,course=course,department_id=departments,gender=gender)
+       messages.success(request,'Student created successful')
+       return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+      elif NTA_Level>6:
+       u = User.objects.create(username=email,email=email,password=password,first_name=name)
+       Student.objects.create(user=u,regNo=regNo,mobile=mobile,academic_year=academic_year,level_id=1,NTA_Level=NTA_Level,course=course,department_id=departments,gender=gender)
+       messages.success(request,'Student created successful')
+       return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+      elif NTA_Level <=6:
+       u = User.objects.create(username=email,email=email,password=password,first_name=name)
+       Student.objects.create(user=u,regNo=regNo,mobile=mobile,academic_year=academic_year,level_id=2,NTA_Level=NTA_Level,course=course,department_id=departments,gender=gender)
+       messages.success(request,'Student created successful')
+       return HttpResponseRedirect(request.META.get('HTTP_REFERER'))    
  except:
     messages.error(request,'Something went wrong')
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
@@ -389,7 +414,7 @@ def addprojecttype(request):
  except:
       messages.error(request,'something is wrong')
       return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
-
+@login_required(login_url='/login')
 def editprojecttype(request,pk):
    
    if request.method == "POST":
@@ -405,7 +430,7 @@ def editprojecttype(request,pk):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))  
  
 
-
+@login_required(login_url='/login')
 def deleteprojecttype(request,pk):
  try:
       Project_type.objects.filter(id=pk).delete()
@@ -573,7 +598,7 @@ def deleteroles(request,pk):
        messages.success(request,'Role deleted successful')
     
     return redirect('/manageroles')
-
+@login_required(login_url='/login')
 def reset_password(request,pk):
    password = make_password("@DIT123")
    User.objects.filter(id=pk).update(password=password)
@@ -581,14 +606,15 @@ def reset_password(request,pk):
    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 @login_required(login_url='/login')
+@login_required(login_url='/login')
 def logout(request):
     auth.logout(request)
     messages.success(request,'logout successful')
     return redirect('/login')
  
- 
+@login_required(login_url='/login')
 def editstaff(request,pk):
-#  try:
+ try:
    if request.method == "POST":
       
       name = request.POST.get('name')
@@ -620,11 +646,11 @@ def editstaff(request,pk):
       u.groups.add(group)
       messages.success(request,'Staff created successful')
       return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-#  except:
-#     messages.error(request,'Something went wrong')
-#     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+ except:
+    messages.error(request,'Something went wrong')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-
+@login_required(login_url='/login')
 def upload_addstaff(request):
         if request.method == 'POST':
          file_data = request.FILES['file']
@@ -656,8 +682,44 @@ def upload_addstaff(request):
         messages.success(request,'Staff created successful')
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-
+@login_required(login_url='/login')
 def projects(request):
    
    
+   
    return render(request,'html/dist/projects.html')
+
+@login_required(login_url='/login')
+def changepassword(request):
+   if request.method =='POST':
+      old = request.POST.get("old")
+      new = request.POST.get("new")
+      comf = request.POST.get("comf")
+      print(request.user.check_password(old))
+      if (request.user.check_password(old)):
+       if (new == comf): 
+         User.objects.filter(username=request.user.username).update(password=make_password(new))
+         messages.success(request,'successful password changed login again')
+         return redirect('/login')
+       else:
+           messages.error(request,'Password Dont Match')
+           return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+      else:
+         messages.error(request,'Check Your Old Password')
+         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+      
+def upload(request):
+   if request.method == 'POST':
+      name = request.POST.get('name')
+      description = request.POST.get('desc')
+      image= request.FILES.get("file")
+      Document.objects.create(name=name, description=description, image=image)
+   s = Student.objects.all().count()
+   d = Department.objects.all().count()
+   p = Project.objects.all().count()
+   f  = Staff.objects.all().count()
+   finalB =  Progress.objects.all()
+   finalD =  Student.objects.filter(NTA_Level=6)
+   return render(request,'html/dist/index.html',{'side':'dashboard','s':s,'d':d,'f':f,'p':p,'b':finalB,'o':finalD})
+   
+   

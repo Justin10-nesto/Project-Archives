@@ -30,7 +30,7 @@ urlpatterns = [
     path('editdepartment/<str:pk>',views.editdepartment,name='editdepartment'),
     path('deletedepartment/<str:pk>',views.deletedepartment,name='deletedepartment'),
     path('blockuser/<str:pk>',views.blockuser,name='blockuser'),
-    
+    # path('upload', views.upload, name='upload'),
      path('editlevel/<str:pk>',views.editlevel,name='editlevel'),
     path('deletelevel/<str:pk>',views.deletelevel,name='deletelevel'),
     # path('removedoctor/<str:pk>',views.removedoctor,name='removedoctor'),
@@ -40,7 +40,7 @@ urlpatterns = [
     # path('deletedoctor/<str:pk>',views.deletedoctor,name='deletedoctor'),
     path('addstudent',views.addstudent,name='addstudent'),
     # path('addpatient',views.addpatient,name='addpatient'),
-    # path('changeuserpassword/<str:pk>',views.changeuserpassword,name='changeuserpassword'),
+    path('changepassword',views.changepassword,name='changepassword'),
     # path('changedoctorpassword/<str:pk>',views.changedoctorpassword,name='changedoctorpassword'),
     path("manageroles",views.manageroles,name="manageroles"),
     path("addroles",views.addroles,name="addroles"),

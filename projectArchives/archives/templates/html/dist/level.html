@@ -158,55 +158,7 @@
         <!-- /.modal -->
     </form>
 </div>
-<script>
 
-    $(document).ready(function() {
-        $('#email').on('blur', function() {
-            var email = $(this).val();
-            if (email) {
-                $.ajax({
-                    url: '{% url 'check_info' %}',
-                    data: {
-                        email: email,
-                        type: 'email'
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        if (data.is_taken) {
-                            $('#email_status').html('Email already exists.').css('color', 'red');
-                        } else {
-                            $('#email_status').html('Email is available.').css('color', 'green');
-                        }
-                    }
-                });
-            }
-        });
-    
-        $('#username').on('blur', function() {
-            var username = $(this).val();
-            if (username) {
-                $.ajax({
-                    url: '{% url 'check_info' %}',
-                    data: {
-                        username: username,
-                        type: 'username'
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        if (data.is_taken) {
-                            $('#username_status').html('Username already exists.').css('color', 'red');
-                        } else {
-                            $('#username_status').html('Username is available.').css('color', 'green');
-                        }
-                    }
-                });
-            }
-        });
-    });
-    
-
-</script>
-    
     
 </div>
 
