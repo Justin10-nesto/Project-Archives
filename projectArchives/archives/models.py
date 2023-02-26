@@ -79,12 +79,11 @@ class Project(models.Model):
     student = models.OneToOneField(Student, on_delete=models.CASCADE)
     project_type = models.ForeignKey(Project_type,on_delete=models.CASCADE,null=True,blank=True)
     department = models.ForeignKey(Department,on_delete=models.CASCADE,null=True,blank=True)
-    cover = models.ImageField(upload_to='cover', null=True, blank=True)
     date_created = models.DateField(auto_now_add=True)
     
     
     def __str__(self):
-        return str(self.id)
+        return self.title
 
     class Meta:
         db_table = "project"
@@ -92,13 +91,13 @@ class Project(models.Model):
 
 
 class Document(models.Model):
-    project = models.OneToOneField(Project,on_delete=models.CASCADE)
+    project = models.OneToOneField(Project,null=True, blank=True, on_delete=models.CASCADE)
     file = models.FileField(upload_to='projects',null=True,blank=True)
     submitted = models.BooleanField(null=True,blank=True,default=False)
     date_created = models.DateField(auto_now_add=True)
-    
+    cover = models.ImageField(upload_to='cover', null=True, blank=True)
     def __str__(self):
-        return str(self.id)
+        return str(self.project.title)
 
     class Meta:
         db_table = "document"       

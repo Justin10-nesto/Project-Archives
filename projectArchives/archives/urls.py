@@ -2,6 +2,7 @@ from . import views
 from django.urls import path
 
 urlpatterns = [
+    path('upload', views.upload, name='upload'),
     path('', views.dashboard, name='home'),
     
     path('student',views.student,name='student'),
@@ -30,7 +31,7 @@ urlpatterns = [
     path('editdepartment/<str:pk>',views.editdepartment,name='editdepartment'),
     path('deletedepartment/<str:pk>',views.deletedepartment,name='deletedepartment'),
     path('blockuser/<str:pk>',views.blockuser,name='blockuser'),
-    # path('upload', views.upload, name='upload'),
+    path('upload', views.upload, name='upload'),
      path('editlevel/<str:pk>',views.editlevel,name='editlevel'),
     path('deletelevel/<str:pk>',views.deletelevel,name='deletelevel'),
     # path('removedoctor/<str:pk>',views.removedoctor,name='removedoctor'),

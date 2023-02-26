@@ -23,9 +23,8 @@ from django.core.files import File
 from .models import *
 from django.http import JsonResponse
 from pdf2image import convert_from_path
-import os
 import csv
-
+from fuzzywuzzy import fuzz
 
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -685,9 +684,9 @@ def upload_addstaff(request):
 @login_required(login_url='/login')
 def projects(request):
    
+   d = Document.objects.all()
    
-   
-   return render(request,'html/dist/projects.html')
+   return render(request,'html/dist/projects.html',{'d':d})
 
 @login_required(login_url='/login')
 def changepassword(request):
@@ -710,16 +709,161 @@ def changepassword(request):
       
 def upload(request):
    if request.method == 'POST':
-      name = request.POST.get('name')
-      description = request.POST.get('desc')
+      
+      
       image= request.FILES.get("file")
-      Document.objects.create(name=name, description=description, image=image)
+      Document.objects.create(project_id=1, file=image)
    s = Student.objects.all().count()
    d = Department.objects.all().count()
    p = Project.objects.all().count()
    f  = Staff.objects.all().count()
    finalB =  Progress.objects.all()
    finalD =  Student.objects.filter(NTA_Level=6)
-   return render(request,'html/dist/index.html',{'side':'dashboard','s':s,'d':d,'f':f,'p':p,'b':finalB,'o':finalD})
+   return render(request,'html/dist/project.html',{'side':'dashboard','s':s,'d':d,'f':f,'p':p,'b':finalB,'o':finalD})
    
+import PyPDF2
+import docx2txt
+from fuzzywuzzy import fuzz
+
+def check_file_similarity(file_path):
+    
+    similarity_scores = []
+   
+    # extract text content from PDF files
+    if file_path.endswith('.pdf'):
+        with open(file_path, 'rb') as f:
+            pdf_reader = PyPDF2.PdfReader(f)
+            file_content = ''
+            for page in pdf_reader.pages:
+                file_content += page.extract_text()
+                
+    # extract text content from Word files
+    elif file_path.endswith('.docx'):
+        file_content = docx2txt.process(file_path)
+        
+    # other file types not supported
+    else:
+        raise ValueError('Unsupported file type')
+    
+    for obj in Document.objects.all():
+        # extract text content from object file
+        if obj.file.path.endswith('.pdf'):
+            with open(obj.file.path, 'rb') as f:
+                pdf_reader = PyPDF2.PdfReader(f)
+                obj_content = ''
+                for page in pdf_reader.pages:
+                    obj_content += page.extract_text()
+        elif obj.file.path.endswith('.docx'):
+            obj_content = docx2txt.process(obj.file.path)
+        else:
+            continue
+        name = (obj.file.name)[9:]
+        
+        # calculate similarity score
+        similarity_score = fuzz.token_set_ratio(obj_content, file_content)
+        similarity_scores.append((name, similarity_score))
+   
+    return similarity_scores
+
+
+  
+
+
+def upload(request):
+    above= []
+    if request.method == 'POST':  
+        file = request.FILES['file'].read()
+        fileName= request.POST['filename']
+        existingPath = request.POST['existingPath']
+        end = request.POST['end']
+        nextSlice = request.POST['nextSlice']
+        
+        if file=="":
+            res = JsonResponse({'data':'Invalid Request'})
+            return res
+        else:
+            if existingPath == 'null':
+                path = 'media/projects/' + fileName
+                
+                if path.endswith('.pdf'):
+                  with open(path, 'wb+') as destination: 
+                     destination.write(file)
+                  FileFolder = Document()
+                  similarity_scores = check_file_similarity(path)
+                  print(similarity_scores)
+                  if len(similarity_scores)==0:
+                        FileFolder.file = f'projects\\{fileName}'
+                        
+                        #  FileFolder.project_id = end
+                        #  FileFolder.name = fileName
+                        
+                        images = convert_from_path(path,poppler_path=poppler_path)
+                        r = random.randint(1,100)
+                        name = f'page{r}'+'.jpg'
+                        path = f'{cover}\\{name}' 
+                        
+                        
+                        # Save pages as images in the pdf
+                        images[0].save(path) 
+                        FileFolder.cover = name
+                        FileFolder.save()
+                        if int(end):
+                           res = JsonResponse({'data':'Uploaded Successfully','existingPath': fileName})
+                        else:
+                           res = JsonResponse({'existingPath': fileName})
+                        return res   
+                  else:
+                     if max(similarity_scores,key=lambda x:x[1])[1] == 100:
+                            res = JsonResponse({'data':'File Exists','existingPath': fileName})
+                      
+                     elif max(similarity_scores,key=lambda x:x[1])[1] > 80:
+                        res = JsonResponse({'data':max(similarity_scores,key=lambda x:x[1]),'existingPath': fileName})
+                        
+                     else:
+                        FileFolder.file = f'projects\\{fileName}'
+                        
+                        #  FileFolder.project_id = end
+                        #  FileFolder.name = fileName
+                        
+                        images = convert_from_path(path,poppler_path=poppler_path)
+                        r = random.randint(1,100)
+                        name = f'page{r}'+'.jpg'
+                        path = f'{cover}\\{name}' 
+                        
+                        
+                        # Save pages as images in the pdf
+                        images[0].save(path) 
+                        FileFolder.cover = name
+                        FileFolder.save()
+                        if int(end):
+                           res = JsonResponse({'data':'Uploaded Successfully','existingPath': fileName})
+                        else:
+                           res = JsonResponse({'existingPath': fileName})
+                        return res
+                     return res
+                else:
+                  res = JsonResponse({'messages':messages.success(request,'ONly pdf required')})
+                  return res
+
+            else:
+                path = 'media/' + existingPath
+                model_id = File.objects.get(existingPath=existingPath)
+                if model_id.name == fileName:
+                    if not model_id.eof:
+                        with open(path, 'ab+') as destination: 
+                            destination.write(file)
+                        if int(end):
+                            model_id.eof = int(end)
+                            model_id.save()
+                            res = JsonResponse({'data':'Uploadeds Successfully','existingPath':model_id.existingPath})
+                        else:
+                            res = JsonResponse({'existingPath':model_id.existingPath})    
+                        return res
+                    else:
+                        res = JsonResponse({'data':'EOF found. Invalid request'})
+                        return res
+                else:
+                    res = JsonResponse({'data':'No such file exists in the existingPath'})
+                    return res
+    return render(request, 'html/dist/upload.html')
    
