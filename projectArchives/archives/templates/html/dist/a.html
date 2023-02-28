@@ -1,0 +1,28 @@
+{% load static %}
+{% include "includes/header.html" %}
+{% include "includes/sidebar.html" %}
+
+
+  <h1>Trigger URL based on date and time</h1>
+  <form>
+    <label for="datetime">Enter date and time:</label>
+    <input type="datetime-local" id="datetime" name="datetime">
+    <button type="button" onclick="scheduleRedirect()">Schedule redirect</button>
+  </form>
+
+  <script>
+    function scheduleRedirect() {
+      var inputDate = new Date(document.getElementById("datetime").value);
+
+      var checkDateInterval = setInterval(function() {
+        var now = new Date();
+        if (now.getTime() >= inputDate.getTime()) {
+          clearInterval(checkDateInterval);
+          window.location.href = "/";
+        }
+      }, 1000); // Check every second
+    }
+  </script>
+
+
+  {% include "includes/js.html "%} 

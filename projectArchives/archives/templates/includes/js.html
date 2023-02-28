@@ -19,7 +19,25 @@
     <script src="{% static 'assets/vendors/DataTables/datatables.min.js' %}" type="text/javascript"></script>
 
     <script>
-
+      <script>
+        const disabledKeys = ["c", "C", "x", "J", "u", "I"]; // keys that will be disabled
+      
+        const showAlert = e => {
+          e.preventDefault(); // preventing its default behaviour
+          return alert("Sorry, you can't view or copy source codes this way!");
+        }
+      
+        document.addEventListener("contextmenu", e => {
+          showAlert(e); // calling showAlert() function on mouse right click
+        });
+      
+        document.addEventListener("keydown", e => {
+          // calling showAlert() function, if the pressed key matched to disabled keys
+          if((e.ctrlKey && disabledKeys.includes(e.key)) || e.key === "F12") {
+            showAlert(e);
+          }
+        });
+      </script>
         <script>
             function AddTableARIA() {
                 try {
@@ -163,6 +181,51 @@
           
           }); 
     </script>
+    <script>
+      $(document).ready(function() {
+          var table = $('#data-tablex').DataTable({
+              "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            "columnDefs": [{
+              "searchable": false,
+              "orderable": false,
+              "targets": [2]
+            }],
+            "order": [
+              [0, 'asc']
+            ]
+          });
+        
+          $('#data-tablex thead tr:eq(1) th').each(function() {
+            var title = $(this).text();
+            $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+          });
+        
+        
+        }); 
+  </script>
+
+  <script>
+    $(document).ready(function() {
+        var table = $('#data').DataTable({
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+          "columnDefs": [{
+            "searchable": false,
+            "orderable": false,
+            "targets": [2]
+          }],
+          "order": [
+            [0, 'asc']
+          ]
+        });
+      
+        $('#data thead tr:eq(1) th').each(function() {
+          var title = $(this).text();
+          $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+        });
+      
+      
+      }); 
+</script>
 
 
     <script>
@@ -187,6 +250,8 @@
         
         }); 
   </script>
+
+
 
 </body>
 

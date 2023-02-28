@@ -25,6 +25,7 @@ from django.http import JsonResponse
 from pdf2image import convert_from_path
 import csv
 from fuzzywuzzy import fuzz
+import requests
 
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -33,7 +34,16 @@ cover = os.path.join(PROJECT_DIR, '..', 'media','coverpage')
 profile = os.path.join(PROJECT_DIR, '..', 'media','profile_pic')
 
 
-
+def check_connection():
+       try:
+        response = requests.get('http://www.google.com')
+        if response.status_code == 200:
+              return True
+       except:
+          pass
+       
+       return False
+           
 
 def  login(request):
  try:
@@ -43,8 +53,11 @@ def  login(request):
    projects = Project()
  
    
-   
-   if request.method == 'POST':
+   is_connected = check_connection()
+   print(is_connected)
+   if is_connected==True:
+    if request.method == 'POST':
+     if is_connected==True:
       email=request.POST.get("username")
       password=request.POST.get("password")
       users = User.objects.filter(username=email).exists()
@@ -179,9 +192,15 @@ def  login(request):
                return redirect('/')
          
             return redirect('/login')
-   return render(request,'html/dist/login.html')
+     else: 
+        messages.error(request,'No internet Connection')
+        return render(request,'html/dist/login.html')         
+    return render(request,'html/dist/login.html')
+   else:
+      messages.error(request,'No internet Connection')
+      return render(request,'html/dist/login.html')    
  except:
-    messages.success(request,'Something went wrong')
+    messages.error(request,'Something went wrong')
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
@@ -771,6 +790,7 @@ def check_file_similarity(file_path):
 
 def upload(request):
     above= []
+   
     if request.method == 'POST':  
         file = request.FILES['file'].read()
         fileName= request.POST['filename']
@@ -778,7 +798,7 @@ def upload(request):
         end = request.POST['end']
         nextSlice = request.POST['nextSlice']
         
-        if file=="":
+        if fileName == "":
             res = JsonResponse({'data':'Invalid Request'})
             return res
         else:
@@ -789,9 +809,14 @@ def upload(request):
                   with open(path, 'wb+') as destination: 
                      destination.write(file)
                   FileFolder = Document()
+                  project = Project()
                   similarity_scores = check_file_similarity(path)
-                  print(similarity_scores)
+                  print(request.user.student.id)
                   if len(similarity_scores)==0:
+                        project.student_id = request.user.student.id
+                        project.department_id = request.user.student.department.id
+                        project.save()
+                        FileFolder.project_id = project.id
                         FileFolder.file = f'projects\\{fileName}'
                         
                         #  FileFolder.project_id = end
@@ -806,9 +831,12 @@ def upload(request):
                         # Save pages as images in the pdf
                         images[0].save(path) 
                         FileFolder.cover = name
+                        
                         FileFolder.save()
                         if int(end):
                            res = JsonResponse({'data':'Uploaded Successfully','existingPath': fileName})
+                           
+                           
                         else:
                            res = JsonResponse({'existingPath': fileName})
                         return res   
@@ -867,3 +895,70 @@ def upload(request):
                     return res
     return render(request, 'html/dist/upload.html')
    
+   
+def pdf_upload(request):
+    if request.method == 'POST' and request.FILES['pdf']:
+        file = request.FILES.get('pdf').read()
+        pdf = request.FILES['pdf']
+        path = 'media/projects/' + str(pdf)
+        if path.endswith('.pdf'):
+         with open(path, 'wb+') as destination: 
+                     destination.write(file)
+         project = Project()
+         similarity_scores = check_file_similarity(path)         
+         if len(similarity_scores)==0:
+            images = convert_from_path(path,poppler_path=poppler_path)
+            name = str(pdf)[:-4]
+            name = f'{name}'+'.jpg'
+            path = f'{cover}\\{name}' 
+            project.student_id = request.user.student.id
+            project.department_id = request.user.student.department.id
+            project.save()         
+             # Save pages as images in the pdf
+            images[0].save(path) 
+                        
+            pdf_file = Document(cover=name,file=pdf,project_id = project.id )
+            pdf_file.save()
+            messages.success(request, 'Your PDF was uploaded successfully!')
+            return render(request, 'html/dist/pdf_upload.html', {'pdf_file': pdf_file})
+         else:
+                     # if max(similarity_scores,key=lambda x:x[1])[1] == 100:
+                     #       messages.error(request, 'File Exists')
+                     #       return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+                      
+                     if max(similarity_scores,key=lambda x:x[1])[1] > 80:
+                        messages.error(request, f'Yout file is {max(similarity_scores,key=lambda x:x[1])[1]} %  resemble with {max(similarity_scores,key=lambda x:x[1])[0]}')
+                        os.remove(path)
+                        # res = JsonResponse({'data':max(similarity_scores,key=lambda x:x[1]),'existingPath': fileName})
+                        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+                        
+                     else:
+                        images = convert_from_path(path,poppler_path=poppler_path)
+                        name = str(pdf)[:-4]
+                        name = f'{name}'+'.jpg'
+                        path = f'{cover}\\{name}' 
+                        project.student_id = request.user.student.id
+                        project.department_id = request.user.student.department.id
+                        project.save()         
+                        # Save pages as images in the pdf
+                        images[0].save(path) 
+                                    
+                        pdf_file = Document(cover=name,file=pdf,project_id = project.id )
+                        pdf_file.save()
+                        messages.success(request, 'Your PDF was uploaded successfully!')
+                        return render(request, 'html/dist/pdf_upload.html', {'pdf_file': pdf_file})
+        else:
+            messages.error(request, 'only Pdf file required') 
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))  
+           
+    return render(request, 'html/dist/pdf_upload.html')
+ 
+ 
+def a(request):
+    
+   d = Document.objects.get(id=68)
+    
+    
+        
+   return render(request, 'html/dist/previewed.html',{'d':d})
+  

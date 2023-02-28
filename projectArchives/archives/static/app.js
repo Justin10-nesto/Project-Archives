@@ -79,13 +79,11 @@ class FileUpload {
                 return xhr;
             },
 
-            url: '/upload',
-            type: 'POST',
-            dataType: 'json',
-            cache: false,
-            processData: false,
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: form_data,
             contentType: false,
-            data: formData,
+            processData: false,
             error: function (xhr) {
                 alert(xhr.statusText);
                 $('.progress-bar').removeClass('bg-success').addClass('bg-warning')
@@ -101,10 +99,15 @@ class FileUpload {
                     // upload complete
                     $('.textbox').text(res.data);
                     $('.progress-bar').removeClass('bg-warning').addClass('bg-success')
-                    $('.progress-bar').css('width', '100%')
+                    $('.progress-bar').css('width', '50%')
                     $('.progress-bar').text('100%')
+                    // Replace the current page with Google
+                    window.location.replace("https://www.google.com");
+
+                  
                 }
             }
+            
         });
     };
 }

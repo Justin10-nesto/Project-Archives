@@ -2,7 +2,7 @@
 {% include "includes/header.html" %}
 {% include "includes/sidebar.html" %}
   <!-- START PAGE CONTENT-->
-  <div class="page-heading">
+  {% comment %} <div class="page-heading">
     <h1 class="page-title">DataTables</h1>
     <ol class="breadcrumb">
         <li class="breadcrumb-item">
@@ -10,7 +10,7 @@
         </li>
         <li class="breadcrumb-item">DataTables</li>
     </ol>
-</div>
+</div> {% endcomment %}
 {% include "includes/messages.html" %}    
 <div class="page-content fade-in-up">
     <div class="ibox">
@@ -24,12 +24,11 @@
         </div>
         
         <div class="ibox-body">
-            <div class="table-wrapper" role="group" aria-labelledby="caption">
-                
-                    
+            <div class="table-wrapper" role="group" aria-labelledby="caption">      
                 <table id="data-tables" class="table table-striped table-bordered" style="width:100%">
                   <thead>
                     <tr>
+                      <th><input type="checkbox" id="selectAll"></th>
                     <th>Staff ID</th>
                       <th>Name</th>
                       <th>Email</th>
@@ -45,6 +44,7 @@
                   <tbody>
                     {% for s in s %}
                     <tr>
+                      <td><input type="checkbox" id="checkbox1" value="{{s.staff_id}}"></td>
                       <td>{{s.staff_id}}</td>
                       <td>{{s.user.first_name}}</td>
                       <td>{{s.user.username}}</td>
@@ -586,7 +586,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/dataTables.bootstrap.min.js"></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/moment.min.js'></script>
 {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
-
+<script>
+  var selectAllCheckbox = document.getElementById("selectAll");
+  var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  
+  selectAllCheckbox.addEventListener("change", function(){
+    for (var i = 0; i < checkboxes.length; i++) {
+      checkboxes[i].checked = selectAllCheckbox.checked;
+    }
+  });
+</script>
 <script>
 $(document).ready(function() {
    $("#sort").DataTable({
