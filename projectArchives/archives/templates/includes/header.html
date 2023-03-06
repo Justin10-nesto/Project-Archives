@@ -135,9 +135,12 @@
 
   
     <!-- PAGE LEVEL STYLES-->
-</head>
-
+</head> 
+{% if side == 'projects' or side == 'a' %}
+<body class="fixed-navbar" style="">
+{% else %}
 <body class="fixed-navbar" style="overflow:hidden; height:100%">
+    {% endif %}
     <div class="page-wrapper">
         <!-- START HEADER-->
         <header class="header">

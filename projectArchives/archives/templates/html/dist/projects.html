@@ -18,23 +18,26 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  
 } 
 
 .card-contents{
   display: flex;
-  justify-content: center;
+  {% comment %} justify-content: center; {% endcomment %}
   align-items: center;
   flex-wrap: wrap;
   margin-top: 20px;
+  
 }
 
 .cards{
   {% comment %} position: relative; {% endcomment %}
   background: #fff;
   max-width: 320px;
-  width: 300px;
-  height: auto;
-  margin: 5px;
+  width: 230px;
+  
+  height: 450px;
+  margin: 10px;
   box-shadow: 0 5px 25px rgb(1 1 1 / 20%);
   border-radius: 10px;
   overflow: hidden;
@@ -55,14 +58,14 @@
   padding: 10px 20px 20px;
 }
 
-.card-infos h3{
-  font-size: 1.8em;
+.card-infos h6{
+  font-size: 1em;
   font-weight: 800;
   margin-bottom: 5px;
 }
 
 .card-infos p{
-  font-size: 1em;
+  font-size: 0.75em;
   margin-bottom: 5px;
 }
 
@@ -70,6 +73,7 @@
   text-align: center;
   margin: 30px 30px 60px;
   user-select: none;
+  justify-content: center;
 }
 
 .pagination li{
@@ -118,86 +122,31 @@
 </style>
     
       <div class="card-contents">
+        {% if d %}
         {% for d in d %}
         <div class="cards">
-          <div class="card-images"><img src="media//coverpage//{{d.cover}}" style="height:350px; width:420px" alt=""></div>
+          <div class="card-images"><img src="/media/coverpage/{{d.cover}}" style="height:250px; width:320px" alt=""></div>
           <div class="card-infos">
-            <h3>{{d.id}}</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            <a href="#" class="btn btn-primary">Go</a>
+            <h6>{{d.project.title}}</h6>
+            <p>{{d.project.project_type.name | title}}</p>
+            <p>{{d.project.student.level.name | title}}</p>
+            <p>{{d.project.student.department.name | title}}</p>
+            <p>{{d.project.student.academic_year}}</p>
+            <a href="/preview_pdf/{{d.id}}" class="btn btn-primary">Go</a>
           </div>
           
         </div>
-        {% comment %} <div class="cards">
-          <div class="card-images"><img src="media//coverpage//{{d.cover}}" style="height:350px; width:420px" alt=""></div>
-          <div class="card-infos">
-            <h3>{{d.id}}</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-           <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
-        </div> {% endcomment %}
+       
         {% endfor %}
-          {% comment %} <div class="cards">
-          <div class="card-images"><img src="{% static 'assets/img/page.jpg' %}" style="height:350px; width:420px" alt=""></div>
-          <div class="card-infos">
-            <h3>Card 02</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-           <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
-        </div>
-          <div class="cards">
-          <div class="card-images"><img src="{% static 'assets/img/page.jpg' %}" style="height:350px; width:420px" alt=""></div>
-          <div class="card-infos">
-            <h3>Card 02</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-           <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
-        </div>
-        <div class="cards">
-          <div class="card-images"><img src="{% static 'assets/img/page.jpg' %}" style="height:350px; width:420px" alt=""></div>
-          <div class="card-infos">
-            <h3>Card 01</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-           <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
-        </div>
-        <div class="cards">
-          <div class="card-images"><img src="{% static 'assets/img/page.jpg' %}" style="height:350px; width:420px" alt=""></div>
-          <div class="card-infos">
-            <h3>Card 01</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-           <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
-        </div>
-        <div class="cards">
-          <div class="card-images"><img src="{% static 'assets/img/page.jpg' %}" style="height:350px; width:420px" alt=""></div>
-          <div class="card-infos">
-            <h3>Card 01</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-           <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
-        </div>
-        <div class="cards">
-          <div class="card-images"><img src="{% static 'assets/img/page.jpg' %}" style="height:350px; width:420px" alt=""></div>
-          <div class="card-infos">
-            <h3>Card 01</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-           <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
-        </div>
-        <div class="cards">
-          <div class="card-images"><img src="{% static 'assets/img/page.jpg' %}" style="height:350px; width:420px" alt=""></div>
-          <div class="card-infos">
-            <h3>RAPHAEL</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-           <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
-        </div> {% endcomment %}
-        <div class="pagination">
          
-        </div>
+        
+        
+      </div>
+      <div class="pagination">
+         
       </div>
     </div>
+    {% endif %}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" charset="utf-8"></script>
 <script type="text/javascript">
@@ -227,7 +176,7 @@ function getPageList(totalPages, page, maxLength){
 
 $(function(){
   var numberOfItems = $(".card-contents .cards").length;
-  var limitPerPage = 6; //How many card items visible per a page
+  var limitPerPage = 8; //How many card items visible per a page
   var totalPages = Math.ceil(numberOfItems / limitPerPage);
   var paginationsSize = 7; //How many page elements visible in the paginations
   var currentPage;

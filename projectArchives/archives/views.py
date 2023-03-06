@@ -45,7 +45,7 @@ def check_connection():
        return False
            
 
-def  login(request):
+def login(request):
  try:
    user = User()
    students = Student()
@@ -157,27 +157,27 @@ def  login(request):
                students.department_id = 6
             if 'bachelor' in (rex.level).lower():
                    students.level_id = 1
-            if 'diploma' in (rex.level).lower():
+            else:
                    students.level_id = 2
             students.save()
-            us = Student.objects.get(user__username=email)
-            print(f'{rex.NTA_level}:{rex.level}')
-            if rex.NTA_level == '6' and 'diploma' in (rex.level).lower():
-                   projects.student_id = us.id
-                   projects.department_id = us.department_id
+            # us = Student.objects.get(user__username=email)
+            # print(f'{rex.NTA_level}:{rex.level}')
+            # if rex.NTA_level == '6' and 'diploma' in (rex.level).lower():
+            #        projects.student_id = us.id
+            #        projects.department_id = us.department_id
                   
-                  #  projects.save()
-                  #  doc = Document.objects.create(project=projects)
-                  #  Progress.objects.create(document=doc)
-            if 'bachelor' in (rex.level).lower() and rex.NTA_level == '8':
-                    projects.student_id = us.id
-                    projects.department_id = us.department_id
+            #       #  projects.save()
+            #       #  doc = Document.objects.create(project=projects)
+            #       #  Progress.objects.create(document=doc)
+            # if 'bachelor' in (rex.level).lower() and rex.NTA_level == '8':
+            #         projects.student_id = us.id
+            #         projects.department_id = us.department_id
                   
-            projects.save()  
-            p = Project.objects.get(student_id=us.id)
-            Document.objects.create(project_id=p.id)
-            f = Document.objects.get(project_id=p.id)
-            Progress.objects.create(document_id=f.id)
+            # projects.save()  
+            # p = Project.objects.get(student_id=us.id)
+            # Document.objects.create(project_id=p.id)
+            # f = Document.objects.get(project_id=p.id)
+            # Progress.objects.create(document_id=f.id)
             rex.studentImage(email=request.POST.get("username"), password=request.POST.get("password"))
             
             with open(rex.regno+".jpg", 'rb') as f:
@@ -247,7 +247,7 @@ def addstudent(request):
       regNo = request.POST.get('regno')
       mobile = request.POST.get('mobile')
       academic_year = request.POST.get('academic_year')
-      NTA_Level = request.POST.get('NTA_Level')
+      NTA_Level = int(request.POST.get('NTA_Level'))
       course = request.POST.get('course')
       departments = request.POST.get('department')
       gender = request.POST.get('gender')
@@ -705,7 +705,7 @@ def projects(request):
    
    d = Document.objects.all()
    
-   return render(request,'html/dist/projects.html',{'d':d})
+   return render(request,'html/dist/projects.html',{'side':'projects','d':d})
 
 @login_required(login_url='/login')
 def changepassword(request):
@@ -788,177 +788,203 @@ def check_file_similarity(file_path):
   
 
 
-def upload(request):
-    above= []
+# def upload(request):
+#     above= []
    
-    if request.method == 'POST':  
-        file = request.FILES['file'].read()
-        fileName= request.POST['filename']
-        existingPath = request.POST['existingPath']
-        end = request.POST['end']
-        nextSlice = request.POST['nextSlice']
+#     if request.method == 'POST':  
+#         file = request.FILES['file'].read()
+#         fileName= request.POST['filename']
+#         existingPath = request.POST['existingPath']
+#         end = request.POST['end']
+#         nextSlice = request.POST['nextSlice']
         
-        if fileName == "":
-            res = JsonResponse({'data':'Invalid Request'})
-            return res
-        else:
-            if existingPath == 'null':
-                path = 'media/projects/' + fileName
+#         if fileName == "":
+#             res = JsonResponse({'data':'Invalid Request'})
+#             return res
+#         else:
+#             if existingPath == 'null':
+#                 path = 'media/projects/' + fileName
                 
-                if path.endswith('.pdf'):
-                  with open(path, 'wb+') as destination: 
-                     destination.write(file)
-                  FileFolder = Document()
-                  project = Project()
-                  similarity_scores = check_file_similarity(path)
-                  print(request.user.student.id)
-                  if len(similarity_scores)==0:
-                        project.student_id = request.user.student.id
-                        project.department_id = request.user.student.department.id
-                        project.save()
-                        FileFolder.project_id = project.id
-                        FileFolder.file = f'projects\\{fileName}'
+#                 if path.endswith('.pdf'):
+#                   with open(path, 'wb+') as destination: 
+#                      destination.write(file)
+#                   FileFolder = Document()
+#                   project = Project()
+#                   similarity_scores = check_file_similarity(path)
+#                   print(request.user.student.id)
+#                   if len(similarity_scores)==0:
+#                         project.student_id = request.user.student.id
+#                         project.department_id = request.user.student.department.id
+#                         project.save()
+#                         FileFolder.project_id = project.id
+#                         FileFolder.file = f'projects\\{fileName}'
                         
-                        #  FileFolder.project_id = end
-                        #  FileFolder.name = fileName
+#                         #  FileFolder.project_id = end
+#                         #  FileFolder.name = fileName
                         
-                        images = convert_from_path(path,poppler_path=poppler_path)
-                        r = random.randint(1,100)
-                        name = f'page{r}'+'.jpg'
-                        path = f'{cover}\\{name}' 
+#                         images = convert_from_path(path,poppler_path=poppler_path)
+#                         r = random.randint(1,100)
+#                         name = f'page{r}'+'.jpg'
+#                         path = f'{cover}\\{name}' 
                         
                         
-                        # Save pages as images in the pdf
-                        images[0].save(path) 
-                        FileFolder.cover = name
+#                         # Save pages as images in the pdf
+#                         images[0].save(path) 
+#                         FileFolder.cover = name
                         
-                        FileFolder.save()
-                        if int(end):
-                           res = JsonResponse({'data':'Uploaded Successfully','existingPath': fileName})
+#                         FileFolder.save()
+#                         if int(end):
+#                            res = JsonResponse({'data':'Uploaded Successfully','existingPath': fileName})
                            
                            
-                        else:
-                           res = JsonResponse({'existingPath': fileName})
-                        return res   
-                  else:
-                     if max(similarity_scores,key=lambda x:x[1])[1] == 100:
-                            res = JsonResponse({'data':'File Exists','existingPath': fileName})
+#                         else:
+#                            res = JsonResponse({'existingPath': fileName})
+#                         return res   
+#                   else:
+#                      if max(similarity_scores,key=lambda x:x[1])[1] == 100:
+#                             res = JsonResponse({'data':'File Exists','existingPath': fileName})
                       
-                     elif max(similarity_scores,key=lambda x:x[1])[1] > 80:
-                        res = JsonResponse({'data':max(similarity_scores,key=lambda x:x[1]),'existingPath': fileName})
+#                      elif max(similarity_scores,key=lambda x:x[1])[1] > 80:
+#                         res = JsonResponse({'data':max(similarity_scores,key=lambda x:x[1]),'existingPath': fileName})
                         
-                     else:
-                        FileFolder.file = f'projects\\{fileName}'
+#                      else:
+#                         FileFolder.file = f'projects\\{fileName}'
                         
-                        #  FileFolder.project_id = end
-                        #  FileFolder.name = fileName
+#                         #  FileFolder.project_id = end
+#                         #  FileFolder.name = fileName
                         
-                        images = convert_from_path(path,poppler_path=poppler_path)
-                        r = random.randint(1,100)
-                        name = f'page{r}'+'.jpg'
-                        path = f'{cover}\\{name}' 
+#                         images = convert_from_path(path,poppler_path=poppler_path)
+#                         r = random.randint(1,100)
+#                         name = f'page{r}'+'.jpg'
+#                         path = f'{cover}\\{name}' 
                         
                         
-                        # Save pages as images in the pdf
-                        images[0].save(path) 
-                        FileFolder.cover = name
-                        FileFolder.save()
-                        if int(end):
-                           res = JsonResponse({'data':'Uploaded Successfully','existingPath': fileName})
-                        else:
-                           res = JsonResponse({'existingPath': fileName})
-                        return res
-                     return res
-                else:
-                  res = JsonResponse({'messages':messages.success(request,'ONly pdf required')})
-                  return res
+#                         # Save pages as images in the pdf
+#                         images[0].save(path) 
+#                         FileFolder.cover = name
+#                         FileFolder.save()
+#                         if int(end):
+#                            res = JsonResponse({'data':'Uploaded Successfully','existingPath': fileName})
+#                         else:
+#                            res = JsonResponse({'existingPath': fileName})
+#                         return res
+#                      return res
+#                 else:
+#                   res = JsonResponse({'messages':messages.success(request,'ONly pdf required')})
+#                   return res
 
-            else:
-                path = 'media/' + existingPath
-                model_id = File.objects.get(existingPath=existingPath)
-                if model_id.name == fileName:
-                    if not model_id.eof:
-                        with open(path, 'ab+') as destination: 
-                            destination.write(file)
-                        if int(end):
-                            model_id.eof = int(end)
-                            model_id.save()
-                            res = JsonResponse({'data':'Uploadeds Successfully','existingPath':model_id.existingPath})
-                        else:
-                            res = JsonResponse({'existingPath':model_id.existingPath})    
-                        return res
-                    else:
-                        res = JsonResponse({'data':'EOF found. Invalid request'})
-                        return res
-                else:
-                    res = JsonResponse({'data':'No such file exists in the existingPath'})
-                    return res
-    return render(request, 'html/dist/upload.html')
+#             else:
+#                 path = 'media/' + existingPath
+#                 model_id = File.objects.get(existingPath=existingPath)
+#                 if model_id.name == fileName:
+#                     if not model_id.eof:
+#                         with open(path, 'ab+') as destination: 
+#                             destination.write(file)
+#                         if int(end):
+#                             model_id.eof = int(end)
+#                             model_id.save()
+#                             res = JsonResponse({'data':'Uploadeds Successfully','existingPath':model_id.existingPath})
+#                         else:
+#                             res = JsonResponse({'existingPath':model_id.existingPath})    
+#                         return res
+#                     else:
+#                         res = JsonResponse({'data':'EOF found. Invalid request'})
+#                         return res
+#                 else:
+#                     res = JsonResponse({'data':'No such file exists in the existingPath'})
+#                     return res
+#     return render(request, 'html/dist/upload.html')
    
    
 def pdf_upload(request):
+    p  = Project_type.objects.filter(department_id=request.user.student.department.id)
     if request.method == 'POST' and request.FILES['pdf']:
+        title = request.POST.get('title')
+        type = request.POST.get('type')
         file = request.FILES.get('pdf').read()
         pdf = request.FILES['pdf']
         path = 'media/projects/' + str(pdf)
         if path.endswith('.pdf'):
          with open(path, 'wb+') as destination: 
                      destination.write(file)
-         project = Project()
-         similarity_scores = check_file_similarity(path)         
-         if len(similarity_scores)==0:
-            images = convert_from_path(path,poppler_path=poppler_path)
-            name = str(pdf)[:-4]
-            name = f'{name}'+'.jpg'
-            path = f'{cover}\\{name}' 
-            project.student_id = request.user.student.id
-            project.department_id = request.user.student.department.id
-            project.save()         
-             # Save pages as images in the pdf
-            images[0].save(path) 
+         pdf2 = PyPDF2.PdfReader(path)
+         text2 = ''
+         # for page in range(number_of_pages):
+         text2 += pdf2.pages[0].extract_text()
+         # print(text2.strip())
+         if 'DAR ES SALAAM INSTITUTE OF TECHNOLOGY' in text2:
+            
+            project = Project()
+            similarity_scores = check_file_similarity(path)         
+            if len(similarity_scores)==0:
+               images = convert_from_path(path,poppler_path=poppler_path)
+               name = str(pdf)[-6:-4]
+               names = f'{name}'+'.jpg'
+               paths = f'{cover}\\{names}' 
+               project.title = title.title()
+               project.student_id = request.user.student.id
+               project.department_id = request.user.student.department.id
+               project.project_type_id = type
+               project.save()         
+               
+               images[0].save(paths) 
+               profile = os.path.join(PROJECT_DIR, '..', 'media','projects')
+               os.remove(f'{profile}\\{str(pdf)}')        
+               pdf_file = Document(cover=names,file=pdf,project_id = project.id )
+               pdf_file.save()
+               messages.success(request, 'Your PDF was uploaded successfully!')
+               #os.remove(path)
+               return render(request, 'html/dist/pdf_upload.html', {'pdf_file': pdf_file})
+            else:
+                        # if max(similarity_scores,key=lambda x:x[1])[1] == 100:
+                        #       messages.error(request, 'File Exists')
+                        #       return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
                         
-            pdf_file = Document(cover=name,file=pdf,project_id = project.id )
-            pdf_file.save()
-            messages.success(request, 'Your PDF was uploaded successfully!')
-            return render(request, 'html/dist/pdf_upload.html', {'pdf_file': pdf_file})
+                        if max(similarity_scores,key=lambda x:x[1])[1] > 80:
+                           print(f'projects/{max(similarity_scores,key=lambda x:x[1])[0]}')
+                           d = Document.objects.get(file=f'projects/{max(similarity_scores,key=lambda x:x[1])[0]}')
+                           print(d)
+                           messages.error(request, f'Your file is {max(similarity_scores,key=lambda x:x[1])[1]} %  resemble with project with title {d.project.title.title()} of year {d.project.student.academic_year} {d.project.student.level.name.title()} from {d.project.student.department.name.title()} Department')
+                           # profile = os.path.join(PROJECT_DIR, '..', 'media','projects')
+                           # os.remove(f'{profile}\\{str(pdf)}') 
+                           # res = JsonResponse({'data':max(similarity_scores,key=lambda x:x[1]),'existingPath': fileName})
+                           return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+                           
+                        else:
+                           images = convert_from_path(path,poppler_path=poppler_path)
+                           name = str(pdf)[-6:-4]
+                           name = f'{name}'+'.jpg'
+                           paths = f'{cover}\\{name}' 
+                           project.title = title.title()
+                           project.student_id = request.user.student.id
+                           project.department_id = request.user.student.department.id
+                           project.project_type_id = type
+                           project.save()  
+                                
+                           # Save pages as images in the pdf
+                           images[0].save(paths) 
+                           profile = os.path.join(PROJECT_DIR, '..', 'media','projects')
+                           os.remove(f'{profile}\\{str(pdf)}')           
+                           pdf_file = Document(cover=name,file=pdf,project_id = project.id )
+                           pdf_file.save()
+                           messages.success(request, 'Your PDF was uploaded successfully!')
+                           
+                           return render(request, 'html/dist/pdf_upload.html', {'pdf_file': pdf_file})
          else:
-                     # if max(similarity_scores,key=lambda x:x[1])[1] == 100:
-                     #       messages.error(request, 'File Exists')
-                     #       return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-                      
-                     if max(similarity_scores,key=lambda x:x[1])[1] > 80:
-                        messages.error(request, f'Yout file is {max(similarity_scores,key=lambda x:x[1])[1]} %  resemble with {max(similarity_scores,key=lambda x:x[1])[0]}')
-                        os.remove(path)
-                        # res = JsonResponse({'data':max(similarity_scores,key=lambda x:x[1]),'existingPath': fileName})
-                        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-                        
-                     else:
-                        images = convert_from_path(path,poppler_path=poppler_path)
-                        name = str(pdf)[:-4]
-                        name = f'{name}'+'.jpg'
-                        path = f'{cover}\\{name}' 
-                        project.student_id = request.user.student.id
-                        project.department_id = request.user.student.department.id
-                        project.save()         
-                        # Save pages as images in the pdf
-                        images[0].save(path) 
-                                    
-                        pdf_file = Document(cover=name,file=pdf,project_id = project.id )
-                        pdf_file.save()
-                        messages.success(request, 'Your PDF was uploaded successfully!')
-                        return render(request, 'html/dist/pdf_upload.html', {'pdf_file': pdf_file})
+            messages.error(request, 'Upload your document with cover page') 
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))  
         else:
             messages.error(request, 'only Pdf file required') 
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))  
            
-    return render(request, 'html/dist/pdf_upload.html')
+    return render(request, 'html/dist/pdf_upload.html',{'side':'upload_project','p':p})
  
  
-def a(request):
+def preview_pdf(request,pk):
     
-   d = Document.objects.get(id=68)
+   d = Document.objects.filter(id=pk)
     
-    
+   
         
-   return render(request, 'html/dist/previewed.html',{'d':d})
+   return render(request, 'html/dist/previewed.html',{'side':'a','d':d})
   

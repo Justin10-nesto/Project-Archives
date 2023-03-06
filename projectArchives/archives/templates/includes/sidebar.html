@@ -63,16 +63,34 @@
             </li>
         </ul>
     </li>
-            <li>
-                <a href="javascript:;" class="{% if side == 'project_being' %} active {% elif side == 'project_od' %} active {% endif %}"><i class="sidebar-item-icon fa fa-book"></i>
-                    <span class="nav-label">Projects Management</span><i class="fa fa-angle-left arrow"></i></a>
-                <ul class="nav-2-level collapse">
+            <li class="{% if side == 'upload_project' %} active {% elif side == 'projects' %} active {% endif %}">
+                <a href="javascript:;" class="{% if side == 'upload_project' %} active {% elif side == 'project' %} active {% endif %}"><i class="sidebar-item-icon fa fa-book"></i>
+                    <span class="nav-label">Project Management</span><i class="fa fa-angle-left arrow"></i></a>
+                <ul class="nav-2-level collapse"> 
+                    <li class="{% if side == 'projects' %} active {% endif %}">
+                        <a class="{% if side == 'projects' %} active {% endif %}" href="/projects" class=""><i class="sidebar-item-icon fa fa-eye"></i>
+                            <span class="nav-label">View Project</span></i></a>
+                        {% comment %} <ul class="nav-2-level collapse">
+                            <li>
+                                <a href="/" >BEING</a>
+                            </li>
+                            <li>
+                                <a class="" href="/" >OD</a>
+                            </li>
+                        </ul> {% endcomment %}
+                    </li>
+            <li class="{% if side == 'upload_project' %} active {% endif %}">
+                <a class="{% if side == 'upload_project' %} active {% endif %}" href="/pdf_upload" class=""><i class="sidebar-item-icon fa fa-cloud-upload"></i>
+                    <span class="nav-label">Upload Project</span></i></a>
+                {% comment %} <ul class="nav-2-level collapse">
                     <li>
-                        <a class="{% if side == 'project_being' %} active {% endif %}" href="/projects" >BEING</a>
+                        <a href="/" >BEING</a>
                     </li>
                     <li>
-                        <a class="{% if side == 'project_od' %} active {% endif %}" href="/" >OD</a>
+                        <a class="" href="/" >OD</a>
                     </li>
+                </ul> {% endcomment %}
+            </li>
                 </ul>
             </li>
             <li>

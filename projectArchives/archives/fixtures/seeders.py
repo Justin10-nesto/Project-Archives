@@ -99,15 +99,12 @@ data = [
 } ,
 
 {"model": "archives.Project_type","pk": 6,        
-"fields": {"name": "Embedded","department":2,"date_created":str(datetime.datetime.now().date())}
-} , 
-{"model": "archives.Project_type","pk": 7,        
 "fields": {"name": "Digital Siginal Processing","department":2,"date_created":str(datetime.datetime.now().date())}
 } , 
-{"model": "archives.Project_type","pk": 8,        
+{"model": "archives.Project_type","pk": 7,        
 "fields": {"name": "Digital Image Processing","department":2,"date_created":str(datetime.datetime.now().date())}
 } ,  
-{"model": "archives.Project_type","pk": 9,        
+{"model": "archives.Project_type","pk": 8,        
 "fields": {"name": "AI| ML| Data Mining","department":2,"date_created":str(datetime.datetime.now().date())}
 } , 
    
