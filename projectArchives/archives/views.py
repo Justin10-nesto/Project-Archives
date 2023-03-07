@@ -52,7 +52,8 @@ def login(request):
    staffs = Staff()
    projects = Project()
  
-   
+   role8 = Group.objects.get(name='Final_Year')
+   role = Group.objects.get(name='Student') 
    is_connected = check_connection()
    print(is_connected)
    if is_connected==True:
@@ -132,6 +133,10 @@ def login(request):
             user.email = rex.email
             user.password = make_password(request.POST.get("password"))
             user.save()
+            if rex.NTA_level == '8' or (rex.NTA_level=='6' and 'diploma' in (rex.level).lower()):
+                   user.groups.add(role8)
+            else:
+               user.groups.add(role) 
             # course = (rex.level).split()
             # course = course[-2] +" "+ course[-1]
             # print(course)
@@ -259,6 +264,7 @@ def addstudent(request):
          return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
       if NTA_Level==8:
        u = User.objects.create(username=email,email=email,password=password,first_name=name)
+       
        Student.objects.create(user=u,regNo=regNo,mobile=mobile,academic_year=academic_year,level_id=1,NTA_Level=NTA_Level,course=course,department_id=departments,gender=gender)
        messages.success(request,'Student created successful')
        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
@@ -898,6 +904,7 @@ def check_file_similarity(file_path):
    
 def pdf_upload(request):
     p  = Project_type.objects.filter(department_id=request.user.student.department.id)
+    role = Group.objects.get(name='Student') 
     if request.method == 'POST' and request.FILES['pdf']:
         title = request.POST.get('title')
         type = request.POST.get('type')
@@ -926,7 +933,10 @@ def pdf_upload(request):
                project.department_id = request.user.student.department.id
                project.project_type_id = type
                project.save()         
-               
+               p =User.objects.get(id=request.user.id)
+               for i in Group.objects.all():
+                 p.user.groups.remove(i.id)
+               p.user.groups.add(role)
                images[0].save(paths) 
                profile = os.path.join(PROJECT_DIR, '..', 'media','projects')
                os.remove(f'{profile}\\{str(pdf)}')        
@@ -960,7 +970,10 @@ def pdf_upload(request):
                            project.department_id = request.user.student.department.id
                            project.project_type_id = type
                            project.save()  
-                                
+                           p =User.objects.get(id=request.user.id)
+                           for i in Group.objects.all():
+                            p.groups.remove(i.id)
+                           p.groups.add(role)  
                            # Save pages as images in the pdf
                            images[0].save(paths) 
                            profile = os.path.join(PROJECT_DIR, '..', 'media','projects')
