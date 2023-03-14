@@ -16,6 +16,10 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -24,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-pa=aq6!i*u#!___e03p%vu%+fzi*k9$)p@jr8w0kg&rwndm$0x"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -76,17 +80,20 @@ WSGI_APPLICATION = "projectArchives.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'archives',
-        'USER': 'postgres',
-        'PASSWORD': 'raphael',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
-}
 
+################LOCAL #####################
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'archives',
+#         'USER': 'postgres',
+#         'PASSWORD': 'raphael',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#     }
+# }
+
+##################RAILWAY#########################
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
@@ -98,6 +105,11 @@ DATABASES = {
 #     }
 # }
 
+########### RENDER ##################
+import dj_database_url
+DATABASES = {
+     'default': dj_database_url.parse('postgres://archives_user:G66PW8NAYpOW4cQflGHKlDI3oqTMGsxU@dpg-cg87d5pmbg53mc4dlk00-a.singapore-postgres.render.com/archives')
+         }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
