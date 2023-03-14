@@ -105,7 +105,7 @@ WSGI_APPLICATION = "projectArchives.wsgi.application"
 ########### RENDER ##################
 import dj_database_url
 DATABASES = {
-     'default': dj_database_url.parse('postgres://archives_user:G66PW8NAYpOW4cQflGHKlDI3oqTMGsxU@dpg-cg87d5pmbg53mc4dlk00-a.singapore-postgres.render.com/archives')
+     'default': dj_database_url.parse('postgres://archi_user:Zy3hLyz8QxWHOH5By2N1BS9HnOmrGJUp@dpg-cg89o1fdvk4ljrh48dfg-a.oregon-postgres.render.com/archi')
          }
 
 # Password validation
