@@ -3,7 +3,9 @@ from django.contrib.auth.models import User
 # Create your models here.
 from django_seed import Seed
 
-
+# class User(AbstractUser):
+#     class Meta:
+#         db_table = 'users'
 
 class Level(models.Model):
     name = models.CharField(max_length=30)
@@ -114,3 +116,23 @@ class Progress(models.Model):
 
     class Meta:
         db_table = "progress"  
+        
+class Submission(models.Model):
+    STATUS = (('Reached','Reached'),('Not Reached','Not Reached'))
+    date = models.DateField(auto_now=False,auto_now_add=False  )
+    time = models.TimeField(auto_now=False,auto_now_add=False)
+    level = models.OneToOneField(Level,on_delete=models.CASCADE, null=True,blank=True)
+    status = models.CharField(choices=STATUS, max_length=50, default='Not Reached', null=True,blank=True)
+    class Meta:
+        db_table = "submission"
+
+class Likes(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    document = models.ManyToManyField(Document)
+    class Meta:
+        db_table = "Likes"
+    # class Meta:
+    #     default_permissions = ('')
+    #     permissions = (('like_document','Can like documents'),('can_hire','Can hire employees'),('hire','Can employees'))
+    # staff = models.OneToOneField(Staff,on_delete=models.CASCADE,null=True,blank=True)
+    

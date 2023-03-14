@@ -133,10 +133,10 @@ def login(request):
             user.email = rex.email
             user.password = make_password(request.POST.get("password"))
             user.save()
-            if rex.NTA_level == '8' or (rex.NTA_level=='6' and 'diploma' in (rex.level).lower()):
-                   user.groups.add(role8)
-            else:
-               user.groups.add(role) 
+            # if rex.NTA_level == '8' or (rex.NTA_level=='6' and 'diploma' in (rex.level).lower()):
+            #        user.groups.add(role8)
+            # else:
+            user.groups.add(role) 
             # course = (rex.level).split()
             # course = course[-2] +" "+ course[-1]
             # print(course)
@@ -215,10 +215,16 @@ def dashboard(request):
    
    s = Student.objects.all().count()
    d = Department.objects.all().count()
-   p = Project.objects.all().count()
+   if request.user.is_superuser:
+          
+    p = Project.objects.all().count()
+   else:
+      p = Project.objects.filter(department_id=request.user.student.department.id).count() or Project.objects.filter(department_id=request.user.staff.department.id).count()    
    f  = Staff.objects.all().count()
    finalB =  Progress.objects.all()
    finalD =  Student.objects.filter(NTA_Level=6)
+   k = request.POST.dict()
+   print(k)
    return render(request,'html/dist/index.html',{'side':'dashboard','s':s,'d':d,'f':f,'p':p,'b':finalB,'o':finalD})
 
 @login_required(login_url='/login')
@@ -226,7 +232,7 @@ def student(request):
    exclude_perm=[1,2,3,4,13,14,15,16,17,18,19,20,21,22,23,24,37]
    p = Permission.objects.exclude(id__in=exclude_perm)
    
-   s = Student.objects.all().order_by('NTA_Level')
+   s = Student.objects.all().order_by('id')
    d = Department.objects.all()
    g = Group.objects.all()
    
@@ -391,9 +397,17 @@ def staff(request):
 
 @login_required(login_url='/login')
 def department(request):
-   
-   d = Department.objects.all()
-   return render(request,'html/dist/departments.html',{'side':'department','d':d})
+   try:
+      if request.method=='POST':
+            name = request.POST['name']
+            Department.objects.create(name=name)
+            messages.success(request,'Department Added successful')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+      d = Department.objects.all().order_by('id')
+      return render(request,'html/dist/departments.html',{'side':'department','d':d})
+   except:
+      messages.error(request,'Something Went Wrong')
+      return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 @login_required(login_url='/login')
@@ -467,7 +481,7 @@ def deleteprojecttype(request,pk):
 @login_required(login_url='/login')
 def level(request):
    
-   levels = Level.objects.all()
+   levels = Level.objects.all().order_by('id')
    return render(request,'html/dist/level.html',{'side':'level','level':levels})
 
 @login_required(login_url='/login')
@@ -707,11 +721,61 @@ def upload_addstaff(request):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 @login_required(login_url='/login')
+def upload_student(request):
+      try:
+        if request.method == 'POST':
+         file_data = request.FILES['file']
+         decoded_file = file_data.read().decode('utf-8').splitlines()
+         reader = csv.DictReader(decoded_file)
+         for row in reader:
+                dept_id = Department.objects.get(name=row['Department'])
+                role_id = Group.objects.get(name="Student")
+                users = User.objects.filter(username=row['Email']).exists()
+                user = Student.objects.filter(regNo=row['Registration Number']).exists()
+                if user and users:
+                       continue
+                else:
+                
+                 user = User.objects.create(
+                    first_name=row['Name'],
+                    email=row['Email'],
+                    username=row['Email'],
+                    password = make_password('@DIT123'),
+                    
+                )
+                
+                u = User.objects.get(username=row['email'])
+                u.groups.add(role_id,)
+                Student.objects.create(
+                    user = user,
+                    gender=row['Gender'],
+                    regNo=row['Registration Number'],
+                    course = row['Course'],
+                    mobile = row['Mobile'],
+                    department = dept_id , 
+                    academic_year = row['Academic Year'],
+                    NTA_Level = int(row['NTA_Level'])    
+                )
+                
+        messages.success(request,'Student created successful')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+      except:
+         messages.success(request,'The csv should contain Department,Registration Number, Name, Course, Academic Year,Gender,Mobile,NTA_Level,Email')
+         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+@login_required(login_url='/login')
 def projects(request):
    
    d = Document.objects.all()
+   f = Department.objects.all()
+   s = Student.objects.values_list('academic_year',flat=True).distinct()
+   s = list(s)
+   g = Project_type.objects.filter(department_id = request.user.student.department.id)
    
-   return render(request,'html/dist/projects.html',{'side':'projects','d':d})
+   name = request.POST.get('department')
+   g = Project_type.objects.filter(department__name = name)
+   return render(request,'html/dist/projects.html',{'side':'projects','d':d,'f':f,'s':s,'g':g})
 
 @login_required(login_url='/login')
 def changepassword(request):
@@ -719,7 +783,7 @@ def changepassword(request):
       old = request.POST.get("old")
       new = request.POST.get("new")
       comf = request.POST.get("comf")
-      print(request.user.check_password(old))
+      # print(request.user.check_password(old))
       if (request.user.check_password(old)):
        if (new == comf): 
          User.objects.filter(username=request.user.username).update(password=make_password(new))
@@ -989,8 +1053,8 @@ def pdf_upload(request):
         else:
             messages.error(request, 'only Pdf file required') 
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))  
-           
-    return render(request, 'html/dist/pdf_upload.html',{'side':'upload_project','p':p})
+    j = Document.objects.filter(project__student_id=request.user.student.id).exists()     
+    return render(request, 'html/dist/pdf_upload.html',{'side':'upload_project','p':p,'j':j})
  
  
 def preview_pdf(request,pk):
@@ -1000,4 +1064,58 @@ def preview_pdf(request,pk):
    
         
    return render(request, 'html/dist/previewed.html',{'side':'a','d':d})
-  
+
+def submissionTime(request):
+   # try:
+    ids = []
+    role8 = Group.objects.get(name='Final_Year')
+    role = Group.objects.get(name='Student') 
+    if request.method == 'POST':
+          date = request.POST.get('date')
+          time = request.POST.get('time')
+          y,m,d = date.split("-")
+          h,mm = time.split(":")
+          date = datetime.datetime(int(y),int(m),int(d),int(h),int(mm))
+          if request.user.staff.level.id == '':
+            messages.error(request, 'Data') 
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))    
+          t = Submission.objects.create(date=date,time=time,level_id=request.user.staff.level.id)
+          if t:
+            for s in (Student.objects.filter(level_id =request.user.staff.level.id) and Student.objects.filter(department_id =request.user.staff.department.id)):
+               print(s.id)
+               if s.NTA_Level == 8:
+                     for i in Group.objects.all():
+                                 s.user.groups.remove(i.id)   
+                     s.user.groups.add(role8) 
+               elif s.NTA_Level == 6:
+                        for i in Group.objects.all():
+                                 s.user.groups.remove(i.id)
+                        s.user.groups.add(role8)  
+               
+            messages.success(request, 'data saved successful') 
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
+   # except:
+   #          messages.error(request, 'data saved successful') 
+   #          return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
+
+
+def my_view(request):
+    # Retrieve a Time model instance (assuming it exists)
+   time_instance = Submission.objects.filter(level_id=request.user.staff.level.id).first()
+
+    # Pass the date and time values to the template
+    
+   date=time_instance.date.strftime('%Y-%m-%d')
+   print(date)
+   time=time_instance.time.strftime('%H:%m')
+   y,m,d = date.split("-")
+   h,mm = time.split(":")
+   datt = datetime.datetime(int(y),int(m),int(d),int(h),int(mm))
+   now = datetime.datetime.now()
+
+   return render(request, 'html/dist/b.html', {'date':datt,'now':now})
+
+def get_project_types(request, department):
+    project_types = Project_type.objects.filter(department__name=department)
+    data = [{'id': p.id, 'name': p.name} for p in project_types]
+    return JsonResponse({'project_types': data})

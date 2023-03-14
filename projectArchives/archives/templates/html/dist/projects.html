@@ -119,27 +119,70 @@
 .disable{
   background: #ccc;
 }
+.fa-heart {
+  {% comment %} color: white; {% endcomment %}
+  cursor: pointer;
+  border: 1px solid black;
+  padding: 5px;
+  border-radius: 50%;
+}
+
+.fa-heart.active {
+  color: red;
+}
+
+
 </style>
     
       <div class="card-contents">
         {% if d %}
         {% for d in d %}
+        
         <div class="cards">
-          <div class="card-images"><img src="/media/coverpage/{{d.cover}}" style="height:250px; width:320px" alt=""></div>
+          <div class="card-images"><a href="/preview_pdf/{{d.id}}"><img src="/media/coverpage/{{d.cover}}" style="height:250px; width:320px" alt=""></a>
+          </div>
           <div class="card-infos">
             <h6>{{d.project.title}}</h6>
             <p>{{d.project.project_type.name | title}}</p>
             <p>{{d.project.student.level.name | title}}</p>
             <p>{{d.project.student.department.name | title}}</p>
             <p>{{d.project.student.academic_year}}</p>
-            <a href="/preview_pdf/{{d.id}}" class="btn btn-primary">Go</a>
+            <form id="myForm">
+              {% csrf_token %}
+              <input type="hidden" id="id" name="id" value="{{d.id}}">
+            {% comment %} <div id="like-button"> {% endcomment %}
+              <i class="fa fa-heart like-button" onclick="submitForm()"></i>
+            {% comment %} </div> {% endcomment %}
+            </form>
           </div>
           
         </div>
+     
        
         {% endfor %}
          
-        
+        <script>
+function submitForm(){
+  
+  const form = document.getElementById("myForm");
+  const formData =  new FormData(form);
+  fetch('/',{
+    method: 'POST',
+    body: formData
+  })
+  .then(response=>{
+    if (response.ok){
+      alert("successfully");
+      form.reset();
+      window.location.href = "/projects"
+    }
+    else{
+      alert("fail");
+    }
+  })
+    .catch(error => console.error(error));
+}
+        </script>
         
       </div>
       <div class="pagination">
@@ -223,34 +266,60 @@ $(function(){
 });
 </script>
 
+ <script>
+  const likeButtons = document.querySelectorAll('.like-button');
+
+  likeButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      button.classList.toggle('active');
+      window.location.href = "/";
+    });
+  });
   
+ </script> 
 {% include "includes/footer.html"%}
 <div class="theme-config">
     <div class="theme-config-toggle"><i class="fa fa-cog theme-config-show"></i><i class="ti-close theme-config-close"></i></div>
     <div class="theme-config-box">
         <div class="text-center font-18 m-b-20">SEARCH</div>
-        <div class="font-strong">LAYOUT OPTIONS</div>
+        {% comment %} <div class="font-strong">Deparment</div> {% endcomment %}
         <div class="check-list m-b-20 m-t-10">
-            <form>
-                <label for="dropdown1">Dropdown 1:</label>
-                <select id="dropdown1">
-                  <option value="">Select an option</option>
-                  <option value="card 01">Option 1</option>
-                  <option value="raphael">Option 2</option>
-                  <option value="option3">Option 3</option>
+            <form id="myForm">
+                <label for="dropdown1">Deparment:</label>
+                <select id="dropdown1" class="form-control">
+                  <option value="">All</option>
+                  {% for i in f %}
+                  <option value="{{i.name| title}}">{{i.name| title}}</option>
+                  {% endfor %}
+                  {% comment %} <option value="raphael">Option 2</option>
+                  <option value="option3">Option 3</option> {% endcomment %}
                 </select>
+              </form>
                 <br>
-                <label for="dropdown2">Dropdown 2:</label>
-                <select id="dropdown2">
-                  <option value="">Select an option</option>
-                  <option value="lorem">Option 4</option>
-                  <option value="option5">Option 5</option>
-                  <option value="option6">Option 6</option>
+                <label for="dropdown2">Academic Year</label>
+                <select id="dropdown2" class="form-control">
+                  <option value="">All</option>
+                  {% for i in s %}
+                  <option value="{{i}}">{{i}}</option>
+                  {% endfor %}
+                  {% comment %} <option value="option5">Option 5</option>
+                  <option value="option6">Option 6</option> {% endcomment %}
                 </select>
+                {% comment %} <br>
+                <label for="dropdown3">Project Type</label>
+                <select id="dropdown3" class="form-control">
+                  <option value="">All</option>
+                  
+                  {% for i in g %}
+                  <option value="{{i.name}}">{{i.name}}</option>
+                  {% endfor %}
+                  
+                 
+                </select> {% endcomment %}
                 <br>
                 <label for="textinput">Text Input:</label>
-                <input type="text" id="myInputs">
-              </form>
+                <input type="text" id="myInputb" class="form-control">
+                
         </div>
         
         </div>
@@ -262,22 +331,53 @@ $(function(){
 <div class="preloader-backdrop">
     <div class="page-preloader">Loading</div>
 </div>
+
 <script>
-    function filterCards() {
-        var input, filter, cards, cardInfo, i, txtValue, dropdown1, dropdown2;
-        input = document.getElementById("myInput");
+  const form = document.getElementById("myForm");
+  
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+  
+    const formData = new FormData(form);
+    const url = "/projects";
+  
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        body: formData,
+      });
+  
+      if (response.ok) {
+        alert("Data sent successfully!");
+      } else {
+        alert("Failed to send data!");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("An error occurred while sending data.");
+    }
+  });
+  </script>
+
+  <script>
+    function filterCardz() {
+        var input, filter, cards, cardInfo, i, txtValue, dropdown1, dropdown2,dropdown3;
+        input = document.getElementById("myInputs");
         filter = input.value.toUpperCase();
         cards = document.getElementsByClassName("cards");
         dropdown1 = document.getElementById("dropdown1").value.toUpperCase();
         dropdown2 = document.getElementById("dropdown2").value.toUpperCase();
-        
+        //dropdown3 = document.getElementById("dropdown3").value.toUpperCase();
         // Filter cards based on search input
         for (i = 0; i < cards.length; i++) {
           cardInfo = cards[i].querySelector(".card-infos");
-          
           txtValue = cardInfo.textContent || cardInfo.innerText;
           
-          if ((txtValue.toUpperCase().indexOf(filter) > -1)) {
+          if ((txtValue.toUpperCase().indexOf(filter) > -1) &&
+          (dropdown1 === "" || txtValue.toUpperCase().includes(dropdown1)) &&
+          (dropdown2 === "" || txtValue.toUpperCase().includes(dropdown2))
+          //(dropdown3 === "" || txtValue.toUpperCase().includes(dropdown3))
+          ) {
             cards[i].style.display = "";
           } else {
             cards[i].style.display = "none";
@@ -288,9 +388,7 @@ $(function(){
         if (filter === "") {
           var pagination = document.querySelector(".pagination");
           pagination.style.display = "";
-          
           showCards(1);
-          
         } else {
           var visibleCards = document.querySelectorAll(".cards:not([style*='none'])");
           var cardCount = visibleCards.length;
@@ -300,28 +398,14 @@ $(function(){
             var pagination = document.querySelector(".pagination");
             pagination.style.display = "none";
           }
-          
         }
-        var visibleCards = document.querySelectorAll(".cards:not([style*='none'])");
-        if (visibleCards.length === 0) {
-          // Show the "no file found" message
-          var noResult = document.createElement("p");
-          noResult.innerText = "No files found.";
-          document.querySelector(".card-container").appendChild(noResult);
-        } else {
-          // Remove the "no file found" message if it was previously shown
-          var noResult = document.querySelector(".card-container p");
-          if (noResult) {
-            noResult.remove();
-          }
-        }
-        
       }
       
       
-        document.getElementById("myInput").addEventListener("input", filterCards);
-        document.getElementById("dropdown1").addEventListener("change", filterCards);
-        document.getElementById("dropdown2").addEventListener("change", filterCards);
+      document.getElementById("myInputs").addEventListener("input", filterCardz);
+        document.getElementById("dropdown1").addEventListener("change", filterCardz);
+        document.getElementById("dropdown2").addEventListener("change", filterCardsz);
+        {% comment %} document.getElementById("dropdown3").addEventListener("change", filterCards); {% endcomment %}
 
       
       function showCards(page) {
@@ -372,15 +456,15 @@ $(function(){
   </script>
 
 
-
 <script>
     function filterCards() {
-        var input, filter, cards, cardInfo, i, txtValue, dropdown1, dropdown2;
-        input = document.getElementById("myInputs");
+        var input, filter, cards, cardInfo, i, txtValue, dropdown1, dropdown2,dropdown3;
+        input = document.getElementById("myInputb");
         filter = input.value.toUpperCase();
         cards = document.getElementsByClassName("cards");
         dropdown1 = document.getElementById("dropdown1").value.toUpperCase();
         dropdown2 = document.getElementById("dropdown2").value.toUpperCase();
+        //dropdown3 = document.getElementById("dropdown3").value.toUpperCase();
         // Filter cards based on search input
         for (i = 0; i < cards.length; i++) {
           cardInfo = cards[i].querySelector(".card-infos");
@@ -388,7 +472,9 @@ $(function(){
           
           if ((txtValue.toUpperCase().indexOf(filter) > -1) &&
           (dropdown1 === "" || txtValue.toUpperCase().includes(dropdown1)) &&
-          (dropdown2 === "" || txtValue.toUpperCase().includes(dropdown2))) {
+          (dropdown2 === "" || txtValue.toUpperCase().includes(dropdown2))
+          //(dropdown3 === "" || txtValue.toUpperCase().includes(dropdown3))
+          ) {
             cards[i].style.display = "";
           } else {
             cards[i].style.display = "none";
@@ -413,9 +499,10 @@ $(function(){
       }
       
       
-      document.getElementById("myInputs").addEventListener("input", filterCards);
+      document.getElementById("myInputb").addEventListener("input", filterCards);
         document.getElementById("dropdown1").addEventListener("change", filterCards);
         document.getElementById("dropdown2").addEventListener("change", filterCards);
+        {% comment %} document.getElementById("dropdown3").addEventListener("change", filterCards); {% endcomment %}
 
       
       function showCards(page) {

@@ -157,3 +157,5 @@ MESSAGE_TAGS = {
 }
 
 X_FRAME_OPTIONS = 'SAMEORGIN'
+
+# AUTH_USER_MODEL = 'archives.User'

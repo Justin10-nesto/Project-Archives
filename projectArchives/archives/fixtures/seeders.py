@@ -36,7 +36,7 @@ data = [
         "pk": 6,
         "fields": {
             "name": "Student",
-            "permissions": [32,40,52,56]
+            "permissions": [32,40,52]
         }
     },
    {

@@ -5,15 +5,18 @@
             <div class="page-content fade-in-up">
                 {% include "includes/messages.html" %}
                 <div class="row">
+                    {% if perms.archives.view_student %}
                     <div class="col-lg-3 col-md-6">
                         <div class="ibox bg-success color-white widget-stat">
                             <div class="ibox-body">
                                 <h2 class="m-b-5 font-strong">{{s}}</h2>
                                 <div class="m-b-5">Student</div><i class="ti-user widget-stat-icon"></i>
-                                {% comment %} <div><i class="fa fa-level-up m-r-5"></i><small>25% higher</small></div> {% endcomment %}
+                                
                             </div>
                         </div>
                     </div>
+                    {% endif %}
+                    {% if perms.archives.view_document %}
                     <div class="col-lg-3 col-md-6">
                         <div class="ibox bg-info color-white widget-stat">
                             <div class="ibox-body">
@@ -23,6 +26,8 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
+                    {% if perms.archives.view_department %}
                     <div class="col-lg-3 col-md-6">
                         <div class="ibox bg-warning color-white widget-stat">
                             <div class="ibox-body">
@@ -32,6 +37,8 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
+                    {% if perms.archives.view_staff %}
                     <div class="col-lg-3 col-md-6">
                         <div class="ibox bg-danger color-white widget-stat">
                             <div class="ibox-body">
@@ -41,15 +48,18 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                 </div>
+                {% if perms.archives.view_progress %}
                 <div class="page-content fade-in-up">
                     <div class="ibox">
                         <div class="ibox-head">
                             
                             <div class="ibox-title">Data Table</div>
                             <button class="btn btn-primary" data-toggle="modal"
-                            data-target="#modal-lg2z"><i class="fa fa-plus"></i> New </button>
+                            data-target="#modal-lgx"><i class="fa fa-plus"></i> New </button>
                         </div>
+                       
                         <div class="ibox-body">
                           <div class="table-wrapper" role="group" aria-labelledby="caption">
                                 <table id="data-table" class="table table-striped table-bordered" style="width:100%">
@@ -119,6 +129,21 @@
                               
                         </div>
                     </div>
+                    {% else %}
+                    <div class="col-md-12">
+                        <h5><b>Welcome, {{request.user.first_name}}</b></h5>
+                        
+                    
+                          <p>You have successfully logged into Project Archives Management System (PAMS)</p>
+                          {% comment %} <h5><b>Profile</b></h5>
+                          <p>Here you can edit/update your personal information</p> {% endcomment %}
+                          <h5><b>Project Management</b></h5>
+                          <p>View , Search diffrent projects based on your choice</p>
+                          <h5><b>Project Type</b></h5>
+                          <p>View available Project Type of diffrent department</p>
+                          
+                    </div>  
+                    {% endif %}
                     {% for s in o %}
                 
                 {% if s.user.is_active == True %}
@@ -273,6 +298,51 @@
                      
                     </div>
                       {% endfor %}
+                    <div>  
+                      <form method="post" action="/subtime">
+                        {% csrf_token %}
+                        <div class="modal fade" id="modal-lgx">
+                            <div class="modal-dialog modal-lg1">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Add Date and Time</h4>
+                                        {% comment %} <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button> {% endcomment %}
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>
+                                        <div class="row">
+                                            <div class="col col-md-12">
+                                                <label>Date</label>
+                                                <input type="date" name="date" class="form-control"
+                                                    placeholder="Date">
+                                            </div>
+                                            <div class="col col-md-12">
+                                                <label>Time</label>
+                                                <input type="time" name="time" class="form-control"
+                                                    placeholder="Time">
+                                            </div>
+                                        </div>
+                                        
+                                        </p>
+                                    </div>
+                                    <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                        <button name="addproduct" class="btn btn-primary ">Submit</button>
+                                        
+                                    </div>
+                                    
+                                </div>
+                
+                                
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+                        <!-- /.modal -->
+                    </form>
+                </div>
                 {% comment %} <div class="row">
                     <div class="col-lg-8">
                         <div class="ibox">
