@@ -16,7 +16,7 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+DATABASES_URL = 'PGPASSWORD=lTim7TkFJR4ZCWqsxvdt psql -h containers-us-west-204.railway.app -U postgres -p 7948 -d railway'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -105,7 +105,7 @@ WSGI_APPLICATION = "projectArchives.wsgi.application"
 ########### RENDER ##################
 import dj_database_url
 DATABASES = {
-     'default': dj_database_url.parse('postgres://archi_user:Zy3hLyz8QxWHOH5By2N1BS9HnOmrGJUp@dpg-cg89o1fdvk4ljrh48dfg-a.oregon-postgres.render.com/archi')
+     'default': dj_database_url.config(default=DATABASES_URL,conn_max_age=1800)
          }
 
 # Password validation
